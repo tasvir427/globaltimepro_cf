@@ -1,0 +1,87 @@
+.featureIcon {
+  color: var(--tc);
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+  min-width: 32px;
+}
+
+.stepIcon {
+  color: var(--tc);
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.socialIcon {
+  font-size: 1.8rem;
+  color: #4a4a4a;
+  transition: all 0.3s ease;
+  padding: 0.8rem;
+  border-radius: 50%;
+  background-color: var(--light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.socialIcon:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: var(--light);
+}
+
+.xIcon:hover {
+  background-color: var(--x-color);
+}
+
+.fbIcon:hover {
+  background-color: var(--fb-color);
+}
+
+.liIcon:hover {
+  background-color: var(--li-color);
+}
+
+.top_btn_Icon {
+  margin-right: 4px;
+}
+
+.dst_icon {
+  width: 24px;
+  height: 24px;
+  color: var(--tc);
+}
+
+.dst_iconSm {
+  width: 18px;
+  height: 18px;
+  color: var(--tc);
+}
+
+.dst_clock_icon {
+  margin-bottom: auto;
+  margin-top: 11.8px;
+}
+
+.jl_title_icon {
+  color: var(--tc);
+  font-size: 1.1em;
+}
+
+.jl_method_icon {
+  color: var(--tc);
+  font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .stepIcon {
+    font-size: 1.2rem;
+    padding: 0.4rem;
+  }
+
+  .socialIcon {
+    font-size: 1.5rem;
+    padding: 0.6rem;
+  }
+}

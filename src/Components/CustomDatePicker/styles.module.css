@@ -1,0 +1,7 @@
+.custom_datetime_picker input:invalid {
+  background-color: var(--bg);
+}
+
+.custom_datetime_picker select:invalid {
+  background-color: var(--bg);
+}

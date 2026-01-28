@@ -1,0 +1,397 @@
+.instructions {
+  padding: 20px;
+}
+
+.instructions h1 {
+  font-size: 2rem;
+  color: var(--tc);
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 0.8px dashed var(--accent);
+}
+
+.subHead {
+  color: var(--fc-2);
+  margin: 4px 0;
+}
+
+.howItWorks strong a {
+  color: var(--tc);
+}
+
+.stepsList {
+  counter-reset: step-counter;
+  margin: 2rem 0;
+  padding: 0;
+}
+
+.stepItem {
+  margin-bottom: 2rem;
+}
+
+.stepItem::marker {
+  color: var(--tc);
+}
+
+.stepDetails {
+  position: relative;
+  background-color: var(--bg-2);
+  border-radius: 12px;
+  border-left: 4px solid var(--tc);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stepDetails:not([open]) {
+  padding: 0;
+}
+
+.stepDetails[open] {
+  padding: 1.5rem;
+}
+
+.stepDetails:not([open]) .stepHeader {
+  padding: 1.5rem;
+}
+
+.stepDetails[open] .stepHeader {
+  padding: 0;
+}
+
+.stepDetails:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.stepHeader::-webkit-details-marker {
+  display: none;
+}
+
+.stepTitle {
+  color: var(--tc);
+  font-size: 1.1rem;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+}
+
+.collapseIcon {
+  margin-left: auto;
+  transition: transform 0.3s ease;
+  color: var(--tc);
+}
+
+.stepDetails[open] .collapseIcon {
+  transform: rotate(180deg);
+}
+
+.stepDescription {
+  color: var(--fc-2);
+  line-height: 1.7;
+  margin: 0.75rem 0 0 2.5rem;
+  font-size: 15px;
+  transition: opacity 0.3s ease;
+}
+
+.stepDetails:not([open]) .stepDescription {
+  opacity: 0;
+}
+
+.featuresTitle {
+  font-size: 1.75rem;
+  color: var(--tc);
+  margin: 3rem 0 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.8px solid var(--accent);
+}
+
+.featuresList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+.featuresList li {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  background-color: var(--bg-2);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.featuresList li:hover {
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+  transform: translateY(-2px);
+}
+
+.featuresList li div {
+  color: var(--fc-2);
+  line-height: 1.6;
+}
+
+.featuresList li strong {
+  color: var(--tc);
+}
+
+.infoParagraph {
+  font-size: 13.33px;
+  margin: 0;
+}
+
+.link {
+  color: var(--link);
+  text-decoration: none;
+  text-decoration: underline;
+}
+
+.link:hover {
+  color: var(--link-hover);
+}
+
+.link svg {
+  margin-left: 2px;
+}
+
+.tipsSection h2,
+.qaSection h2,
+.popularRoutes h2 {
+  color: var(--tc);
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 0.8px solid var(--accent);
+}
+
+.tipsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.tipItem {
+  padding: 1.5rem;
+  background-color: var(--bg-1);
+  border-radius: 8px;
+  border-left: 4px solid var(--tc);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tipItem:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.tipTitle {
+  color: var(--tc);
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.tipDescription {
+  color: var(--fc-2);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.qaList {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.qaItem {
+  padding: 1.5rem;
+  background-color: var(--bg-1);
+  border-radius: 8px;
+  border: 0.8px solid rgba(99, 102, 241, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.qaItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.05);
+}
+
+.qaQuestion {
+  color: var(--tc);
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.qaQuestion::before {
+  content: '?';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--tc);
+  font-size: 1.2rem;
+}
+
+.qaAnswer {
+  color: var(--fc-2);
+  line-height: 1.6;
+  font-size: 0.95rem;
+  padding-left: 1.5rem;
+}
+
+.routeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.routeGrid li {
+  background: var(--light);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.routeGrid a {
+  width: fit-content;
+  display: block;
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--tc);
+}
+
+.routeGrid a:hover {
+  text-decoration: underline;
+}
+
+.legendContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 24px;
+  padding: 8px 0;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.legendLabel {
+  font-size: 0.8rem;
+  color: var(--fc-2);
+  margin-left: 4px;
+  text-transform: none;
+}
+
+.tz_indicator {
+  min-width: 14px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tz_indicator span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--light);
+}
+
+.tz_indicator.sleep {
+  background-color: #2e3a59;
+}
+.tz_indicator.morning {
+  background-color: #4fc3f7;
+}
+.tz_indicator.workAm {
+  background-color: #81c784;
+}
+.tz_indicator.lunch {
+  background-color: #ffee58;
+}
+.tz_indicator.workPm {
+  background-color: #66bb6a;
+}
+.tz_indicator.evening {
+  background-color: #ffb74d;
+}
+.tz_indicator.night {
+  background-color: #9575cd;
+}
+
+@media (max-width: 768px) {
+  .instructions h1 {
+    font-size: 1.75rem;
+  }
+
+  .featuresTitle {
+    font-size: 1.5rem;
+  }
+
+  .stepsList li p {
+    margin-left: 0;
+  }
+
+  .featuresList {
+    grid-template-columns: 1fr;
+  }
+
+  .tipsSection h2,
+  .qaSection h2 {
+    font-size: 1.5rem;
+  }
+
+  .tipItem,
+  .qaItem {
+    padding: 1rem;
+  }
+
+  .qaQuestion {
+    padding-left: 1rem;
+  }
+
+  .qaAnswer {
+    padding-left: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .instructions {
+    padding: 1rem;
+  }
+
+  .instructions h1 {
+    font-size: 1.5rem;
+  }
+
+  .featuresTitle {
+    font-size: 1.3rem;
+  }
+
+  .featuresList li {
+    padding: 1rem;
+  }
+
+  .tipsSection h2,
+  .qaSection h2 {
+    font-size: 1.3rem;
+  }
+}

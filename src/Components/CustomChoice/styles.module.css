@@ -1,0 +1,20 @@
+.choice_container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.choice_it {
+  padding: 2.5px 8px;
+  font-family: var(--theme-font);
+  border-radius: 5.4px;
+}
+
+.choice_it_selected {
+  background-color: var(--tc);
+  color: var(--light);
+}
+
+.choice_it_selected:hover {
+  background-color: var(--tc);
+}

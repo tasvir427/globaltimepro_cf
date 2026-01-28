@@ -1,0 +1,22 @@
+.custom_input {
+  width: 100%;
+  max-width: 260px;
+  padding: 11px 8px;
+  border: 0.8px solid var(--accent);
+  background-color: var(--bg);
+  border-radius: 4px;
+  font-family: var(--theme-font), -apple-system, BlinkMacSystemFont, Helvetica,
+    Arial, sans-serif;
+  color: var(--fc-1);
+  box-sizing: border-box;
+}
+
+.custom_input::placeholder {
+  color: var(--fc-2);
+}
+
+.custom_input:focus-visible {
+  border: 0.8px solid var(--accent);
+  background-color: var(--light);
+  outline: 0;
+}

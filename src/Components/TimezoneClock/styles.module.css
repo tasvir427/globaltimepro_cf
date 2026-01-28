@@ -1,0 +1,51 @@
+.tz_indicator {
+  min-width: 14px;
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+  border-radius: 50%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.tz_indicator span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--light);
+}
+
+.tz_clock {
+  display: flex;
+  align-items: center;
+}
+
+.tz_date {
+  font-size: 12px;
+  font-style: italic;
+  color: var(--accent);
+}
+
+.tz_indicator.sleep {
+  background-color: #2e3a59;
+}
+.tz_indicator.morning {
+  background-color: #4fc3f7;
+}
+.tz_indicator.workAm {
+  background-color: #81c784;
+}
+.tz_indicator.lunch {
+  background-color: #ffee58;
+}
+.tz_indicator.workPm {
+  background-color: #66bb6a;
+}
+.tz_indicator.evening {
+  background-color: #ffb74d;
+}
+.tz_indicator.night {
+  background-color: #9575cd;
+}

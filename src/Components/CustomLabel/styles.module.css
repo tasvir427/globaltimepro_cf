@@ -1,0 +1,7 @@
+.label_chip {
+  background-color: var(--tc);
+  color: var(--light);
+  width: fit-content;
+  padding: 3px 6px;
+  text-align: center;
+}

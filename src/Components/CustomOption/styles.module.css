@@ -1,0 +1,31 @@
+.optionContainer {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.optionHeader {
+  display: flex;
+  align-items: center;
+}
+
+.mainText {
+  font-size: 16px;
+}
+
+.mainText_breakAll {
+  word-break: break-all;
+}
+
+.currentBadge {
+  margin-left: 8px;
+  background: var(--tc);
+  color: var(--light);
+  border-radius: 4px;
+  padding: 1.5px 5px;
+  font-size: 12px;
+}
+
+.subText {
+  font-size: 12px;
+}
