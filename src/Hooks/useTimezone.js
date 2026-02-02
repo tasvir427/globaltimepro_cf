@@ -15,6 +15,7 @@ const useTimezone = () => {
         const res = await fetch('/api/get-user-city', {
           method: 'GET',
           credentials: 'same-origin',
+          cache: 'no-store',
         });
         if (res.ok) {
           const data = await res.json();

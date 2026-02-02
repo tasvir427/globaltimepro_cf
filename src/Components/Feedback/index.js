@@ -17,6 +17,7 @@ const Feedback = () => {
     try {
       const response = await fetch('/api/send-feedback', {
         method: 'POST',
+        cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',
         },
