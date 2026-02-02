@@ -1,3 +1,6 @@
 name = "globaltimepro-cf"
 compatibility_date = "2026-02-02"
 pages_build_output_dir = "out"
+
+[vars]
+NEXT_PUBLIC_SITE_URL = "https://www.globaltimepro.com"
