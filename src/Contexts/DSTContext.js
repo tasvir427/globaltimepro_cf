@@ -31,9 +31,9 @@ const DSTContext = createContext();
 export const useDST = () => use(DSTContext);
 
 const DSTProvider = ({ children, defaultValue }) => {
-  const { updateSearchParam, queryString, queryObj } =
+  const { updateSearchParam, queryString, queryObj, params } =
     useQueryParamsWithHistory();
-  const { getTZList } = useTimezone();
+  const { getTZList, userCity } = useTimezone();
 
   const { originTZKey, isReset, redirected, timezoneFormat } = useMemo(() => {
     const sp = new URLSearchParams(queryString);
@@ -180,24 +180,33 @@ const DSTProvider = ({ children, defaultValue }) => {
 
   useEffect(() => {
     if (!window.location.search || isReset || redirected) {
+      let routeData = {};
+
+      if (params.city) {
+        routeData = defaultValue;
+      } else if (isReset) {
+        routeData.originTimeZone = getTZOptionValue(currentTZData) || '';
+      }
+
       updateSearchParam(
         {
           reset: '',
-          originTimeZone:
-            getDefaultValue(
-              defaultValue.originTimeZone,
-              timezoneFormat.value,
-            ) ||
-            getTZOptionValue(currentTZData) ||
-            '',
           ...(redirected ? { ...queryObj, redirected: '' } : {}),
-          ...defaultValue,
+          ...routeData,
         },
         false,
         true,
       );
     }
   }, [isReset]);
+
+  useEffect(() => {
+    if (!originTZKey && ![-1, -2].includes(userCity)) {
+      updateSearchParam({
+        originTimeZone: getTZOptionValue(currentTZData) || '',
+      });
+    }
+  }, [userCity]);
 
   const value = useMemo(
     () => ({

@@ -28,8 +28,7 @@ export const generateMetadata = async () => {
   return { ...m };
 };
 
-const DSTChecker = async ({ searchParams, params }) => {
-  const sParams = await searchParams;
+const DSTChecker = async ({ params }) => {
   const p = await params;
 
   const page = p.city ? `dst-in/${p.city}` : PATHS.dstChecker;
@@ -100,9 +99,7 @@ const DSTChecker = async ({ searchParams, params }) => {
         )}
         {ssData && <SocialSharing {...ssData} page={page} />}
       </div>
-      {schemaData && (
-        <MetaTag page={page} schemaData={schemaData} sParams={sParams} />
-      )}
+      {schemaData && <MetaTag page={page} schemaData={schemaData} />}
     </>
   );
 };

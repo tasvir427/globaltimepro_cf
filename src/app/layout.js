@@ -1,15 +1,12 @@
 import { memo } from 'react';
 import localFont from 'next/font/local';
-import { Bounce, ToastContainer } from 'react-toastify';
-import { ScrollToTop, Footer, ConditionalGA4 } from '@/Components';
 import { PATHS } from '@/paramsData';
 import { getMetaData, SITE_URL } from '@/utils';
-import { RecaptchaProvider } from '@/Contexts';
+import { Footer, ClientProviders } from '@/Components';
 import './globals.css';
 
 export const generateMetadata = async () => {
   const m = await getMetaData(PATHS.timezoneConverter);
-
   return { metadataBase: new URL(SITE_URL), ...m };
 };
 
@@ -42,24 +39,7 @@ const RootLayout = ({ children }) => {
           </main>
           <div className="right_ad_box" />
         </div>
-        <ScrollToTop />
-        <ToastContainer
-          position="top-center"
-          autoClose={2000}
-          hideProgressBar
-          newestOnTop={false}
-          closeOnClick={false}
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="dark"
-          transition={Bounce}
-          progressClassName="toastify_progress"
-        />
-        <RecaptchaProvider>
-          <ConditionalGA4 />
-        </RecaptchaProvider>
+        <ClientProviders />
       </body>
     </html>
   );

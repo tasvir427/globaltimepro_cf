@@ -30,3 +30,4 @@ export { default as CopyResultBtn } from './CopyResultBtn';
 export { default as ResetBtn } from './ResetBtn';
 export { default as Feedback } from './Feedback';
 export { default as ConditionalGA4 } from './ConditionalGA4';
+export { default as ClientProviders } from './ClientProviders';

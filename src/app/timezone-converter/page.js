@@ -35,8 +35,7 @@ export const generateMetadata = async () => {
   return { ...m };
 };
 
-const TimezoneConverter = async ({ outputOnly, searchParams, params }) => {
-  const sParams = await searchParams;
+const TimezoneConverter = async ({ outputOnly, params }) => {
   const p = await params;
 
   const page =
@@ -162,9 +161,7 @@ const TimezoneConverter = async ({ outputOnly, searchParams, params }) => {
         )}
         {ssData && <SocialSharing {...ssData} page={page} />}
       </div>
-      {schemaData && (
-        <MetaTag page={page} schemaData={schemaData} sParams={sParams} />
-      )}
+      {schemaData && <MetaTag page={page} schemaData={schemaData} />}
     </>
   );
 };

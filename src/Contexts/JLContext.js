@@ -27,7 +27,7 @@ const JLProvider = ({ children, defaultValue }) => {
   const { updateSearchParam, queryString, queryObj, params } =
     useQueryParamsWithHistory();
 
-  const { getTZList } = useTimezone();
+  const { getTZList, userCity } = useTimezone();
 
   const jlGetTZOptionLabel = useCallback((opt) => getTZOptionLabel(opt), []);
 
@@ -241,6 +241,8 @@ const JLProvider = ({ children, defaultValue }) => {
             flightDuration: '',
           };
         }
+      } else if (isReset) {
+        routeData.departureTZ = getTZOptionValue(currentTZData) || '';
       }
 
       const arrivalMoment = departureMoment.clone().add(8, 'hours');
@@ -250,7 +252,6 @@ const JLProvider = ({ children, defaultValue }) => {
       updateSearchParam(
         {
           reset: '',
-          departureTZ: getTZOptionValue(currentTZData) || '',
           departureTime: departureMoment.format(defDateFormat),
           arrivalTime: arrivalMoment.format(defDateFormat),
           bedTime: bedMoment.format(defDateFormat),
@@ -263,6 +264,12 @@ const JLProvider = ({ children, defaultValue }) => {
       );
     }
   }, [isReset]);
+
+  useEffect(() => {
+    if (!departureTZKey && ![-1, -2].includes(userCity)) {
+      updateSearchParam({ departureTZ: getTZOptionValue(currentTZData) || '' });
+    }
+  }, [userCity]);
 
   const value = useMemo(
     () => ({

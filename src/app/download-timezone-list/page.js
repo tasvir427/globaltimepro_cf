@@ -35,8 +35,7 @@ export const generateMetadata = async () => {
   return { ...m };
 };
 
-const DownloadTimezoneList = async ({ searchParams }) => {
-  const sParams = await searchParams;
+const DownloadTimezoneList = async () => {
   const { schemaData, ssData, ...instData } = await getRouteData(
     PATHS.downloadTimezoneList,
   );
@@ -136,11 +135,7 @@ const DownloadTimezoneList = async ({ searchParams }) => {
         <SocialSharing {...ssData} page={PATHS.downloadTimezoneList} />
       )}
       {schemaData && (
-        <MetaTag
-          page={PATHS.downloadTimezoneList}
-          schemaData={schemaData}
-          sParams={sParams}
-        />
+        <MetaTag page={PATHS.downloadTimezoneList} schemaData={schemaData} />
       )}
     </>
   );

@@ -1,22 +1,17 @@
 /** @type {import('next').NextConfig} */
-import withPWAInit from '@ducanh2912/next-pwa';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const deploymentId = process.env.VERCEL_DEPLOYMENT_ID || 'dev';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const withPWA = withPWAInit({
-  disable: process.env.NODE_ENV === 'development',
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
-  reloadOnOnline: true,
-  extendDefaultRuntimeCaching: true,
-  workboxOptions: {
-    // Tell next-pwa to use our custom service worker
-    swSrc: 'service-worker.js',
-  },
-});
+const deploymentId =
+  process.env.VERCEL_DEPLOYMENT_ID || process.env.GITHUB_SHA || 'dev';
 
 const nextConfig = {
   reactStrictMode: false,
+  output: 'export',
+  turbopack: {},
   webpack(config, { isServer, webpack }) {
     if (!isServer) {
       config.plugins.push(
@@ -27,15 +22,6 @@ const nextConfig = {
     }
     return config;
   },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/timezone-converter',
-        permanent: true,
-      },
-    ];
-  },
 };
 
-export default withPWA(nextConfig);
+export default nextConfig;

@@ -32,10 +32,10 @@ const TZProvider = ({ children, defaultValue, outputOnly }) => {
   const prevDestinationCnt = useRef(0);
   const outputDiv = useRef(null);
 
-  const { updateSearchParam, queryString, queryObj, pathname } =
+  const { updateSearchParam, queryString, queryObj, pathname, params } =
     useQueryParamsWithHistory();
 
-  const { timeNow, timeNowTZ, getTZList } = useTimezone();
+  const { timeNow, timeNowTZ, getTZList, userCity } = useTimezone();
 
   const tzCities = useMemo(() => getTZList(), [getTZList]);
 
@@ -210,8 +210,8 @@ const TZProvider = ({ children, defaultValue, outputOnly }) => {
             formattedDate === 'Invalid date'
               ? 'please enter valid date and time'
               : !originTimeZone?.timezone
-              ? 'please select origin timezone'
-              : formattedDate,
+                ? 'please select origin timezone'
+                : formattedDate,
           label: getTZOptionLabel(tz),
           value: getTZOptionValue(tz),
           timezone: tz.timezone,
@@ -351,6 +351,16 @@ const TZProvider = ({ children, defaultValue, outputOnly }) => {
 
   useEffect(() => {
     if (!window.location.search || isReset || redirected) {
+      let routeData = {
+        destinationTimeZone: defaultValue.destinationTimeZone,
+      };
+
+      if (params.origin && params.destination) {
+        routeData.originTimeZone = defaultValue.originTimeZone;
+      } else if (isReset) {
+        routeData.originTimeZone = getTZOptionValue(currentTZData) || '';
+      }
+
       updateSearchParam(
         noChange
           ? { noChange: '' }
@@ -358,25 +368,22 @@ const TZProvider = ({ children, defaultValue, outputOnly }) => {
               reset: '',
               isRealTime: true,
               originTime: timeNow(),
-              originTimeZone:
-                getDefaultValue(
-                  defaultValue.originTimeZone,
-                  timezoneFormat.value,
-                ) ||
-                getTZOptionValue(currentTZData) ||
-                '',
-              destinationTimeZone: getDefaultValue(
-                defaultValue.destinationTimeZone,
-                timezoneFormat.value,
-              ),
               ...(redirected ? { ...queryObj, redirected: '' } : {}),
-              ...defaultValue,
+              ...routeData,
             },
         false,
         true,
       );
     }
   }, [isReset]);
+
+  useEffect(() => {
+    if (!originTZKey && ![-1, -2].includes(userCity)) {
+      updateSearchParam({
+        originTimeZone: getTZOptionValue(currentTZData) || '',
+      });
+    }
+  }, [userCity]);
 
   useEffect(() => {
     if (

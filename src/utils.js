@@ -49,7 +49,7 @@ import { TbWorldQuestion } from 'react-icons/tb';
 import { IoClose } from 'react-icons/io5';
 import { IoMdUndo, IoMdRedo } from 'react-icons/io';
 import { PATHS, PATHS_REVERSE } from '@/paramsData';
-import timezones from '../data/timezones.json';
+import timezones from '@/generated/timezones';
 import styles from '@/utils.module.css';
 
 const COUNTRIES = moment.tz.countries();
@@ -347,20 +347,11 @@ const getTZList = ({ fieldChecks, countries, offsetIn }) => {
   const sortBy = isCity
     ? 'city'
     : isProvince
-    ? 'province'
-    : isTimezone
-    ? 'timezone'
-    : 'standardAbbreviation';
+      ? 'province'
+      : isTimezone
+        ? 'timezone'
+        : 'standardAbbreviation';
   return arr.sort((a, b) => a[sortBy]?.localeCompare(b[sortBy]));
-};
-
-const getCurrentCity = () => {
-  if (typeof document !== 'undefined') {
-    return (
-      document.cookie.match('(^|;)\\s*user_city\\s*=\\s*([^;]+)')?.pop() || -1
-    );
-  }
-  return -1;
 };
 
 const fileTypeOptions = [
@@ -1711,7 +1702,6 @@ const getMeta = ({ title, description, page, manifest }) => {
 };
 
 export {
-  getCurrentCity,
   primaryTZOptText,
   secondaryTZOptText,
   checkFields,
