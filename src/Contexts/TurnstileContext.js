@@ -61,7 +61,6 @@ const RecaptchaProvider = ({ children }) => {
     try {
       const response = await fetch('/api/verify-recaptcha', {
         method: 'POST',
-        cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',
         },
