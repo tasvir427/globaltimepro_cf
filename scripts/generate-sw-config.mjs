@@ -1,12 +1,7 @@
 // scripts/generate-sw-config.mjs
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Try a few likely paramData paths; adjust if your repo differs:
 const candidatePaths = [
   path.join(process.cwd(), 'src', 'paramsData.js'),
   path.join(process.cwd(), 'src', 'paramsData.mjs'),
@@ -16,12 +11,17 @@ const candidatePaths = [
 
 let paramsDataPath = candidatePaths.find((p) => fs.existsSync(p));
 
+// Cloudflare Pages specific environment variables
+// CF_PAGES_COMMIT_SHA - The Git commit SHA of the current deployment
+// CF_PAGES_URL - The deployment URL
+// CF_PAGES_BRANCH - The branch name
+const deploymentId = process.env.CF_PAGES_COMMIT_SHA || `dev-${Date.now()}`; // Fallback for local development
+
+console.log('Building with deployment ID:', deploymentId);
+
 if (!paramsDataPath) {
-  console.warn(
-    'Could not find paramsData automatically. Please edit scripts/generate-sw-config.mjs to point to your paramsData file.',
-  );
-  // Fallback to an empty PATHS
-  const out = `self.__PATHS__ = {}; self.__DEPLOYMENT_ID__ = '${process.env.VERCEL_DEPLOYMENT_ID || process.env.GITHUB_SHA || 'dev'}';`;
+  console.warn('Could not find paramsData. Using empty PATHS.');
+  const out = `self.__PATHS__ = {};\nself.__DEPLOYMENT_ID__ = '${deploymentId}';`;
   fs.writeFileSync(
     path.join(process.cwd(), 'public', 'sw-config.js'),
     out,
@@ -33,18 +33,16 @@ if (!paramsDataPath) {
 
 (async () => {
   try {
-    // Dynamic import of the user's module
     const module = await import(`file://${paramsDataPath}`);
     const PATHS = module.PATHS || module.default?.PATHS || module.default || {};
 
-    const deploymentId =
-      process.env.VERCEL_DEPLOYMENT_ID || process.env.GITHUB_SHA || 'dev';
-
-    const out = `self.__PATHS__ = ${JSON.stringify(PATHS)}; self.__DEPLOYMENT_ID__ = ${JSON.stringify(deploymentId)};`;
+    const out = `self.__PATHS__ = ${JSON.stringify(PATHS)};\nself.__DEPLOYMENT_ID__ = '${deploymentId}';`;
     const outDir = path.join(process.cwd(), 'public');
     if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
     fs.writeFileSync(path.join(outDir, 'sw-config.js'), out, 'utf8');
-    console.log('Wrote public/sw-config.js');
+    console.log(
+      `Wrote public/sw-config.js with deployment ID: ${deploymentId}`,
+    );
   } catch (err) {
     console.error('Error generating sw-config.js:', err);
     process.exit(1);

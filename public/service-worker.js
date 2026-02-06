@@ -1,3 +1,4 @@
+// service-worker.js
 'use strict';
 
 importScripts(
@@ -8,17 +9,16 @@ if (!self.workbox) {
   console.warn('Workbox failed to load.');
 }
 
+// Import our deployment-specific configuration
 try {
   importScripts('/sw-config.js');
 } catch (err) {
   console.warn('Could not import sw-config.js', err);
 }
 
+// Set defaults for development
+self.__DEPLOYMENT_ID__ = self.__DEPLOYMENT_ID__ || `dev-${Date.now()}`;
 self.__PATHS__ = self.__PATHS__ || {};
-self.__DEPLOYMENT_ID__ =
-  typeof self.__DEPLOYMENT_ID__ !== 'undefined'
-    ? self.__DEPLOYMENT_ID__
-    : 'dev';
 
 const { clientsClaim } = workbox.core;
 const { precacheAndRoute, cleanupOutdatedCaches } = workbox.precaching;
@@ -26,21 +26,66 @@ const { registerRoute, NavigationRoute } = workbox.routing;
 const { NetworkFirst, CacheFirst } = workbox.strategies;
 const { ExpirationPlugin } = workbox.expiration;
 
+// Generate cache names with deployment ID for versioning
+const generateCacheName = (path) => `${self.__DEPLOYMENT_ID__}${path}-cache`;
+const navigationsCacheName = `${self.__DEPLOYMENT_ID__}/navigations-cache`;
+
+console.log(
+  'Service Worker loaded with deployment ID:',
+  self.__DEPLOYMENT_ID__,
+);
+
+// 1. INSTALL: Force activation when new service worker is available
 self.addEventListener('install', (event) => {
-  console.log('Service Worker installing...');
+  console.log(
+    'Installing Service Worker with deployment:',
+    self.__DEPLOYMENT_ID__,
+  );
+  // Force the waiting service worker to become the active service worker
   self.skipWaiting();
 });
 
+// 2. ACTIVATE: Clean up old caches when new service worker activates
+self.addEventListener('activate', (event) => {
+  console.log(
+    'Activating Service Worker with deployment:',
+    self.__DEPLOYMENT_ID__,
+  );
+
+  // Claim control of all clients immediately
+  event.waitUntil(self.clients.claim());
+
+  // Clean up old caches that don't match our current deployment ID
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          // Delete any cache that:
+          // 1. Ends with -cache (our cache naming pattern)
+          // 2. Doesn't start with our current deployment ID
+          if (
+            cacheName.endsWith('-cache') &&
+            !cacheName.startsWith(self.__DEPLOYMENT_ID__)
+          ) {
+            console.log('Deleting old cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+          return Promise.resolve();
+        }),
+      );
+    }),
+  );
+});
+
+// Initialize workbox
 clientsClaim();
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST || []);
 
+// Register routes for your static paths
 const STATIC_PATHS = Object.values(self.__PATHS__ || {}).map((p) =>
   p.startsWith('/') ? p : `/${p}`,
 );
-
-const generateCacheName = (path) => `${self.__DEPLOYMENT_ID__}${path}-cache`;
-const navigationsCacheName = `${self.__DEPLOYMENT_ID__}/navigations-cache`;
 
 STATIC_PATHS.forEach((path) => {
   registerRoute(
@@ -52,6 +97,7 @@ STATIC_PATHS.forEach((path) => {
   );
 });
 
+// Navigation route for SPA
 registerRoute(
   new NavigationRoute(
     new NetworkFirst({
@@ -60,11 +106,10 @@ registerRoute(
   ),
 );
 
-// Cache CSS (and any _next static files like JS/CSS) with a CacheFirst strategy
+// Cache static assets
 registerRoute(
   ({ request, url }) =>
     request.destination === 'style' ||
-    // cover next/static hashed css/js paths and typical css location
     url.pathname.startsWith('/_next/static/') ||
     url.pathname.endsWith('.css'),
   new CacheFirst({
@@ -78,7 +123,7 @@ registerRoute(
   }),
 );
 
-// Cache fonts too (optional)
+// Cache fonts
 registerRoute(
   ({ request }) =>
     request.destination === 'font' || /\/fonts\//.test(request.url),
@@ -92,23 +137,3 @@ registerRoute(
     ],
   }),
 );
-
-self.addEventListener('activate', (event) => {
-  const allowedCaches = new Set([
-    ...STATIC_PATHS.map(generateCacheName),
-    navigationsCacheName,
-  ]);
-
-  event.waitUntil(
-    caches.keys().then((cacheNames) =>
-      Promise.all(
-        cacheNames.map((cacheName) => {
-          if (!allowedCaches.has(cacheName) && cacheName.endsWith('-cache')) {
-            return caches.delete(cacheName);
-          }
-          return Promise.resolve();
-        }),
-      ),
-    ),
-  );
-});

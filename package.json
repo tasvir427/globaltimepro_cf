@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "generate:timezones": "node --experimental-specifier-resolution=node scripts/generate-timezones.mjs",
-    "generate:sw-config": "node --experimental-specifier-resolution=node scripts/generate-sw-config.mjs",
-    "generate:sitemap": "node --experimental-specifier-resolution=node scripts/generate-sitemap.mjs",
+    "generate:timezones": "node scripts/generate-timezones.mjs",
+    "generate:sw-config": "node scripts/generate-sw-config.mjs",
+    "generate:sitemap": "node scripts/generate-sitemap.mjs",
     "prebuild": "npm run generate:timezones && npm run generate:sw-config && npm run generate:sitemap",
     "build": "next build",
     "start": "next start",
