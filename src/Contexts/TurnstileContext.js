@@ -7,59 +7,28 @@ import {
   useEffect,
   useState,
   useCallback,
+  useRef,
 } from 'react';
 import Script from 'next/script';
 
-const RecaptchaContext = createContext();
-export const useRecaptcha = () => use(RecaptchaContext);
+const TurnstileContext = createContext();
+export const useTurnstile = () => use(TurnstileContext);
 
-const RecaptchaProvider = ({ children }) => {
+const TurnstileProvider = ({ children }) => {
   const [isHuman, setIsHuman] = useState(false);
-  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
+  const [turnstileLoaded, setTurnstileLoaded] = useState(false);
+  const widgetIdRef = useRef(null);
 
   useEffect(() => {
-    const previouslyVerified = sessionStorage.getItem('recaptcha_verified');
+    const previouslyVerified = sessionStorage.getItem('turnstile_verified');
     if (previouslyVerified === 'true') {
       setIsHuman(true);
     }
   }, []);
 
-  useEffect(() => {
-    if (!isHuman && recaptchaLoaded && window.grecaptcha) {
-      initializeRecaptcha();
-    }
-  }, [isHuman, recaptchaLoaded]);
-
-  const initializeRecaptcha = useCallback(() => {
+  const verifyToken = useCallback(async (token) => {
     try {
-      window.grecaptcha.ready(() => {
-        executeRecaptcha();
-      });
-    } catch (error) {
-      console.error('reCAPTCHA initialization error:', error);
-    }
-  }, []);
-
-  const executeRecaptcha = useCallback(async () => {
-    try {
-      if (!window.grecaptcha) {
-        throw new Error('reCAPTCHA not loaded');
-      }
-
-      const token = await window.grecaptcha.execute(
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-        { action: 'homepage' },
-      );
-
-      await verifyToken(token);
-    } catch (error) {
-      console.error('reCAPTCHA execution error:', error);
-    }
-  }, []);
-
-  const verifyToken = async (token) => {
-    try {
-      const response = await fetch('/api/verify-recaptcha', {
+      const response = await fetch('/api/verify-turnstile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -71,28 +40,84 @@ const RecaptchaProvider = ({ children }) => {
 
       if (response.ok && data.success) {
         setIsHuman(true);
-        sessionStorage.setItem('recaptcha_verified', 'true');
+        sessionStorage.setItem('turnstile_verified', 'true');
       } else {
-        console.error('reCAPTCHA verification failed. Score:', data.score);
+        console.error('Turnstile verification failed:', data);
+        if (window.turnstile && widgetIdRef.current !== null) {
+          window.turnstile.reset(widgetIdRef.current);
+        }
       }
     } catch (error) {
-      console.error('reCAPTCHA verification error:', error);
+      console.error('Turnstile verification error:', error);
     }
-  };
+  }, []);
+
+  const renderTurnstile = useCallback(() => {
+    if (!window.turnstile) {
+      throw new Error('Turnstile not loaded');
+    }
+
+    if (widgetIdRef.current !== null) {
+      return;
+    }
+
+    if (!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+      throw new Error('Missing NEXT_PUBLIC_TURNSTILE_SITE_KEY');
+    }
+
+    const container = document.getElementById('turnstile-container');
+    if (!container) {
+      throw new Error('Turnstile container not found');
+    }
+
+    widgetIdRef.current = window.turnstile.render(container, {
+      sitekey: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
+      size: 'invisible',
+      action: 'homepage',
+      callback: (token) => {
+        verifyToken(token);
+      },
+      'error-callback': () => {
+        console.error('Turnstile widget error');
+      },
+      'expired-callback': () => {
+        if (window.turnstile && widgetIdRef.current !== null && !isHuman) {
+          window.turnstile.execute(widgetIdRef.current);
+        }
+      },
+    });
+
+    window.turnstile.execute(widgetIdRef.current);
+  }, [isHuman, verifyToken]);
+
+  useEffect(() => {
+    if (!isHuman && turnstileLoaded && window.turnstile) {
+      try {
+        renderTurnstile();
+      } catch (error) {
+        console.error('Turnstile initialization error:', error);
+      }
+    }
+  }, [isHuman, renderTurnstile, turnstileLoaded]);
 
   return (
-    <RecaptchaContext value={{ isHuman }}>
+    <TurnstileContext value={{ isHuman }}>
       {children}
-      <Script
-        src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-        strategy="afterInteractive"
-        onLoad={() => setRecaptchaLoaded(true)}
-        onError={() => {
-          console.error('Failed to load reCAPTCHA');
-        }}
-      />
-    </RecaptchaContext>
+      {!isHuman && (
+        <>
+          <div id="turnstile-container" />
+          <Script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+            strategy="afterInteractive"
+            onLoad={() => setTurnstileLoaded(true)}
+            onError={() => {
+              console.error('Failed to load Turnstile');
+            }}
+          />
+        </>
+      )}
+    </TurnstileContext>
   );
 };
 
-export default memo(RecaptchaProvider);
+export default memo(TurnstileProvider);

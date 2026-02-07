@@ -3,7 +3,7 @@
 import { memo, useEffect } from 'react';
 import { Bounce, ToastContainer } from 'react-toastify';
 import { ConditionalGA4, ScrollToTop } from '@/Components';
-import { RecaptchaProvider } from '@/Contexts';
+import { TurnstileProvider } from '@/Contexts';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ClientProviders = () => {
@@ -46,10 +46,10 @@ const ClientProviders = () => {
   return (
     <>
       <div id="client-providers">
-        <RecaptchaProvider>
+        <TurnstileProvider>
           <ConditionalGA4 />
-          <ScrollToTop />
-        </RecaptchaProvider>
+        </TurnstileProvider>
+        <ScrollToTop />
         <ToastContainer
           position="top-center"
           autoClose={2000}

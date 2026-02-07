@@ -2,10 +2,10 @@
 
 import { memo } from 'react';
 import Script from 'next/script';
-import { useRecaptcha } from '@/Contexts';
+import { useTurnstile } from '@/Contexts';
 
 const ConditionalGA4 = () => {
-  const { isHuman } = useRecaptcha();
+  const { isHuman } = useTurnstile();
 
   if (!isHuman) {
     return null;
