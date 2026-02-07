@@ -1,4 +1,4 @@
-import { memo, Suspense } from 'react';
+import { memo } from 'react';
 import classNames from 'classnames';
 import {
   CountrySelect,
@@ -20,6 +20,7 @@ import {
 } from '@/Components';
 import { PATHS } from '@/paramsData';
 import {
+  buildQueryString,
   checkFields,
   getMetaData,
   getRouteData,
@@ -35,7 +36,8 @@ export const generateMetadata = async () => {
   return { ...m };
 };
 
-const DownloadTimezoneList = async () => {
+const DownloadTimezoneList = async ({ searchParams }) => {
+  const initialQueryString = buildQueryString(searchParams);
   const { schemaData, ssData, ...instData } = await getRouteData(
     PATHS.downloadTimezoneList,
   );
@@ -43,88 +45,82 @@ const DownloadTimezoneList = async () => {
   return (
     <>
       <div className={styles.sub_divider_container}>
-        <Suspense>
-          <DLProvider>
-            <div
-              className={classNames(
-                styles.head_container,
-                styles.head_btn_container,
-              )}
-            >
-              <RedoBtn />
-              <UndoBtn />
-              <ResetBtn />
-              <CopyResultBtn />
+        <DLProvider initialQueryString={initialQueryString}>
+          <div
+            className={classNames(
+              styles.head_container,
+              styles.head_btn_container,
+            )}
+          >
+            <RedoBtn />
+            <UndoBtn />
+            <ResetBtn />
+            <CopyResultBtn />
+          </div>
+          <div className={classNames(styles.sub_divider, styles.sub_divider_1)}>
+            <div className={(styles.head_container, styles.head_text_container)}>
+              <CustomHeader title="DOWNLOAD" subtitle="timezone list" />
             </div>
-            <div
-              className={classNames(styles.sub_divider, styles.sub_divider_1)}
-            >
+            <InputLabel className={styles.text_align_center}>
+              {inputLabels.dl_choose}
+            </InputLabel>
+            <div className={styles.division_container}>
               <div
-                className={(styles.head_container, styles.head_text_container)}
+                className={classNames(
+                  styles.division_part,
+                  styles.division_part1,
+                )}
               >
-                <CustomHeader title="DOWNLOAD" subtitle="timezone list" />
-              </div>
-              <InputLabel className={styles.text_align_center}>
-                {inputLabels.dl_choose}
-              </InputLabel>
-              <div className={styles.division_container}>
-                <div
-                  className={classNames(
-                    styles.division_part,
-                    styles.division_part1,
-                  )}
-                >
-                  <div className={styles.checkbox_part_container}>
-                    {checkFields.slice(0, 9).map((field) => (
-                      <CustomCheckbox key={field} name={field} />
-                    ))}
-                  </div>
-                </div>
-                <div className={styles.division_part}>
-                  <div className={styles.checkbox_part_container}>
-                    {checkFields.slice(9, 18).map((field) => (
-                      <CustomCheckbox key={field} name={field} />
-                    ))}
-                  </div>
+                <div className={styles.checkbox_part_container}>
+                  {checkFields.slice(0, 9).map((field) => (
+                    <CustomCheckbox key={field} name={field} />
+                  ))}
                 </div>
               </div>
-              <div className={styles.home_section_container}>
-                <div
-                  className={styles.output_format_tooltip}
-                  title={tooltips.dl_offsetIn}
-                >
-                  <InputLabel className={styles.text_align_center}>
-                    {inputLabels.dl_offsetIn}
-                  </InputLabel>
-                  <OffsetChoice />
+              <div className={styles.division_part}>
+                <div className={styles.checkbox_part_container}>
+                  {checkFields.slice(9, 18).map((field) => (
+                    <CustomCheckbox key={field} name={field} />
+                  ))}
                 </div>
               </div>
-              <div className={styles.home_section_container}>
-                <div
-                  className={styles.output_format_tooltip}
-                  title={tooltips.country_select}
-                >
-                  <InputLabel className={styles.text_align_center}>
-                    {inputLabels.country_select}
-                  </InputLabel>
-                  <CountrySelect />
-                </div>
-              </div>
-              <div className={styles.home_section_container}>
-                <div
-                  className={styles.output_format_tooltip}
-                  title={tooltips.dl_fileType}
-                >
-                  <InputLabel className={styles.text_align_center}>
-                    {inputLabels.dl_fileType}
-                  </InputLabel>
-                  <FileType />
-                </div>
-              </div>
-              <DownloadList />
             </div>
-          </DLProvider>
-        </Suspense>
+            <div className={styles.home_section_container}>
+              <div
+                className={styles.output_format_tooltip}
+                title={tooltips.dl_offsetIn}
+              >
+                <InputLabel className={styles.text_align_center}>
+                  {inputLabels.dl_offsetIn}
+                </InputLabel>
+                <OffsetChoice />
+              </div>
+            </div>
+            <div className={styles.home_section_container}>
+              <div
+                className={styles.output_format_tooltip}
+                title={tooltips.country_select}
+              >
+                <InputLabel className={styles.text_align_center}>
+                  {inputLabels.country_select}
+                </InputLabel>
+                <CountrySelect />
+              </div>
+            </div>
+            <div className={styles.home_section_container}>
+              <div
+                className={styles.output_format_tooltip}
+                title={tooltips.dl_fileType}
+              >
+                <InputLabel className={styles.text_align_center}>
+                  {inputLabels.dl_fileType}
+                </InputLabel>
+                <FileType />
+              </div>
+            </div>
+            <DownloadList />
+          </div>
+        </DLProvider>
       </div>
       {instData && (
         <div className={styles.ins_div}>

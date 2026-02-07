@@ -1,4 +1,4 @@
-import { memo, Suspense } from 'react';
+import { memo } from 'react';
 import classNames from 'classnames';
 import {
   CustomHeader,
@@ -14,7 +14,13 @@ import {
 } from '@/Components';
 import { JLProvider } from '@/Contexts';
 import { PATHS } from '@/paramsData';
-import { getMetaData, getRouteData, inputLabels, tooltips } from '@/utils';
+import {
+  buildQueryString,
+  getMetaData,
+  getRouteData,
+  inputLabels,
+  tooltips,
+} from '@/utils';
 import {
   TimeZoneSelector,
   CurrentDestination,
@@ -33,8 +39,9 @@ export const generateMetadata = async () => {
   return { ...m };
 };
 
-const JetLagPlanner = async ({ params }) => {
+const JetLagPlanner = async ({ params, searchParams }) => {
   const p = await params;
+  const initialQueryString = buildQueryString(searchParams);
 
   const page =
     p.origin && p.destination
@@ -48,150 +55,147 @@ const JetLagPlanner = async ({ params }) => {
   return (
     <>
       <div className={styles.sub_divider_container}>
-        <Suspense>
-          <JLProvider defaultValue={defaultValue}>
-            <div
-              className={classNames(
-                styles.head_container,
-                styles.head_btn_container,
-              )}
-            >
-              <RedoBtn />
-              <UndoBtn />
-              <ResetBtn />
-              <CopyResultBtn />
+        <JLProvider
+          defaultValue={defaultValue}
+          initialQueryString={initialQueryString}
+        >
+          <div
+            className={classNames(
+              styles.head_container,
+              styles.head_btn_container,
+            )}
+          >
+            <RedoBtn />
+            <UndoBtn />
+            <ResetBtn />
+            <CopyResultBtn />
+          </div>
+          <div className={classNames(styles.sub_divider, styles.sub_divider_1)}>
+            <div className={(styles.head_container, styles.head_text_container)}>
+              <CustomHeader
+                title="JET LAG"
+                subtitle="planner"
+                note="DST adjusted."
+              />
             </div>
-            <div
-              className={classNames(styles.sub_divider, styles.sub_divider_1)}
-            >
+            <div className={styles.division_container}>
               <div
-                className={(styles.head_container, styles.head_text_container)}
+                className={classNames(
+                  styles.division_part,
+                  styles.division_part1,
+                )}
               >
-                <CustomHeader
-                  title="JET LAG"
-                  subtitle="planner"
-                  note="DST adjusted."
-                />
-              </div>
-              <div className={styles.division_container}>
                 <div
-                  className={classNames(
-                    styles.division_part,
-                    styles.division_part1,
-                  )}
-                >
-                  <div
-                    className={styles.origin_timezone_tooltip}
-                    title={tooltips.departureTZ}
-                  >
-                    <InputLabel className={styles.text_align_center}>
-                      {inputLabels.departureTZ}
-                    </InputLabel>
-                    <TimeZoneSelector name="departureTZ" />
-                  </div>
-                  <div className={styles.current_container}>
-                    <div title={tooltips.current_departure_city}>
-                      <CurrentOrigin />
-                    </div>
-                  </div>
-                </div>
-                <div className={styles.arrow_right_icon_container}>
-                  <MiddleArrow />
-                </div>
-                <div className={styles.division_part}>
-                  <div
-                    className={styles.origin_timezone_tooltip}
-                    title={tooltips.destinationTZ}
-                  >
-                    <InputLabel className={styles.text_align_center}>
-                      {inputLabels.destinationTZ}
-                    </InputLabel>
-                    <TimeZoneSelector name="destinationTZ" />
-                  </div>
-                  <div className={styles.current_container}>
-                    <div title={tooltips.current_destination_city}>
-                      <CurrentDestination />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.division_container}>
-                <div
-                  className={classNames(
-                    styles.division_part,
-                    styles.division_part1,
-                  )}
-                >
-                  <div className={styles.origin_timezone_tooltip}>
-                    <InputLabel className={styles.text_align_center}>
-                      {inputLabels.departureTime}
-                    </InputLabel>
-                    <OriginTime name="departureTime" />
-                  </div>
-                </div>
-                <div className={styles.arrow_right_icon_container}>
-                  <MiddleArrow />
-                </div>
-                <div className={styles.division_part}>
-                  <div className={styles.origin_timezone_tooltip}>
-                    <InputLabel className={styles.text_align_center}>
-                      {inputLabels.arrivalTime}
-                    </InputLabel>
-                    <OriginTime name="arrivalTime" />
-                  </div>
-                </div>
-              </div>
-              <div className={styles.division_container}>
-                <div
-                  className={classNames(
-                    styles.division_part,
-                    styles.division_part1,
-                  )}
-                >
-                  <div className={styles.origin_timezone_tooltip}>
-                    <InputLabel className={styles.text_align_center}>
-                      {inputLabels.bedTime}
-                    </InputLabel>
-                    <OriginTime
-                      name="bedTime"
-                      format="hh:mm a"
-                      calendarIcon={null}
-                    />
-                  </div>
-                </div>
-                <div className={styles.arrow_right_icon_container}>
-                  <MiddleArrow />
-                </div>
-                <div className={styles.division_part}>
-                  <div className={styles.origin_timezone_tooltip}>
-                    <InputLabel className={styles.text_align_center}>
-                      {inputLabels.wakeTime}
-                    </InputLabel>
-                    <OriginTime
-                      name="wakeTime"
-                      format="hh:mm a"
-                      calendarIcon={null}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className={styles.home_section_container}>
-                <div
-                  className={styles.output_format_tooltip}
-                  title={tooltips.timeLine}
+                  className={styles.origin_timezone_tooltip}
+                  title={tooltips.departureTZ}
                 >
                   <InputLabel className={styles.text_align_center}>
-                    {inputLabels.timeLine}
+                    {inputLabels.departureTZ}
                   </InputLabel>
-                  <TimeLine />
+                  <TimeZoneSelector name="departureTZ" />
+                </div>
+                <div className={styles.current_container}>
+                  <div title={tooltips.current_departure_city}>
+                    <CurrentOrigin />
+                  </div>
                 </div>
               </div>
-              <DaysUntil />
-              <GeneratePlan />
+              <div className={styles.arrow_right_icon_container}>
+                <MiddleArrow />
+              </div>
+              <div className={styles.division_part}>
+                <div
+                  className={styles.origin_timezone_tooltip}
+                  title={tooltips.destinationTZ}
+                >
+                  <InputLabel className={styles.text_align_center}>
+                    {inputLabels.destinationTZ}
+                  </InputLabel>
+                  <TimeZoneSelector name="destinationTZ" />
+                </div>
+                <div className={styles.current_container}>
+                  <div title={tooltips.current_destination_city}>
+                    <CurrentDestination />
+                  </div>
+                </div>
+              </div>
             </div>
-            <OutputList />
-          </JLProvider>
-        </Suspense>
+            <div className={styles.division_container}>
+              <div
+                className={classNames(
+                  styles.division_part,
+                  styles.division_part1,
+                )}
+              >
+                <div className={styles.origin_timezone_tooltip}>
+                  <InputLabel className={styles.text_align_center}>
+                    {inputLabels.departureTime}
+                  </InputLabel>
+                  <OriginTime name="departureTime" />
+                </div>
+              </div>
+              <div className={styles.arrow_right_icon_container}>
+                <MiddleArrow />
+              </div>
+              <div className={styles.division_part}>
+                <div className={styles.origin_timezone_tooltip}>
+                  <InputLabel className={styles.text_align_center}>
+                    {inputLabels.arrivalTime}
+                  </InputLabel>
+                  <OriginTime name="arrivalTime" />
+                </div>
+              </div>
+            </div>
+            <div className={styles.division_container}>
+              <div
+                className={classNames(
+                  styles.division_part,
+                  styles.division_part1,
+                )}
+              >
+                <div className={styles.origin_timezone_tooltip}>
+                  <InputLabel className={styles.text_align_center}>
+                    {inputLabels.bedTime}
+                  </InputLabel>
+                  <OriginTime
+                    name="bedTime"
+                    format="hh:mm a"
+                    calendarIcon={null}
+                  />
+                </div>
+              </div>
+              <div className={styles.arrow_right_icon_container}>
+                <MiddleArrow />
+              </div>
+              <div className={styles.division_part}>
+                <div className={styles.origin_timezone_tooltip}>
+                  <InputLabel className={styles.text_align_center}>
+                    {inputLabels.wakeTime}
+                  </InputLabel>
+                  <OriginTime
+                    name="wakeTime"
+                    format="hh:mm a"
+                    calendarIcon={null}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className={styles.home_section_container}>
+              <div
+                className={styles.output_format_tooltip}
+                title={tooltips.timeLine}
+              >
+                <InputLabel className={styles.text_align_center}>
+                  {inputLabels.timeLine}
+                </InputLabel>
+                <TimeLine />
+              </div>
+            </div>
+            <DaysUntil />
+            <GeneratePlan />
+          </div>
+          <OutputList />
+        </JLProvider>
         {instData && (
           <div className={styles.ins_div}>
             <Instructions {...instData} />

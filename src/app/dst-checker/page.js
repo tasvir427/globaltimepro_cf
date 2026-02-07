@@ -1,4 +1,4 @@
-import { memo, Suspense } from 'react';
+import { memo } from 'react';
 import classNames from 'classnames';
 import {
   CustomHeader,
@@ -13,7 +13,13 @@ import {
 } from '@/Components';
 import { DSTProvider } from '@/Contexts';
 import { PATHS } from '@/paramsData';
-import { getMetaData, getRouteData, inputLabels, tooltips } from '@/utils';
+import {
+  buildQueryString,
+  getMetaData,
+  getRouteData,
+  inputLabels,
+  tooltips,
+} from '@/utils';
 import {
   TimezoneFormat,
   OriginTimeZone,
@@ -28,8 +34,9 @@ export const generateMetadata = async () => {
   return { ...m };
 };
 
-const DSTChecker = async ({ params }) => {
+const DSTChecker = async ({ params, searchParams }) => {
   const p = await params;
+  const initialQueryString = buildQueryString(searchParams);
 
   const page = p.city ? `dst-in/${p.city}` : PATHS.dstChecker;
   const { schemaData, ssData, defaultValue, ...instData } = await getRouteData(
@@ -40,58 +47,55 @@ const DSTChecker = async ({ params }) => {
   return (
     <>
       <div className={styles.sub_divider_container}>
-        <Suspense>
-          <DSTProvider defaultValue={defaultValue}>
-            <div
-              className={classNames(
-                styles.head_container,
-                styles.head_btn_container,
-              )}
-            >
-              <RedoBtn />
-              <UndoBtn />
-              <ResetBtn />
-              <CopyResultBtn />
+        <DSTProvider
+          defaultValue={defaultValue}
+          initialQueryString={initialQueryString}
+        >
+          <div
+            className={classNames(
+              styles.head_container,
+              styles.head_btn_container,
+            )}
+          >
+            <RedoBtn />
+            <UndoBtn />
+            <ResetBtn />
+            <CopyResultBtn />
+          </div>
+          <div className={classNames(styles.sub_divider, styles.sub_divider_1)}>
+            <div className={(styles.head_container, styles.head_text_container)}>
+              <CustomHeader title="DST" subtitle="checker" />
             </div>
-            <div
-              className={classNames(styles.sub_divider, styles.sub_divider_1)}
-            >
+            <div className={styles.home_section_container}>
               <div
-                className={(styles.head_container, styles.head_text_container)}
+                className={styles.timezoneFormat_title}
+                title={tooltips.timezoneFormat}
               >
-                <CustomHeader title="DST" subtitle="checker" />
+                <InputLabel className={styles.text_align_center}>
+                  {inputLabels.timezoneFormat}
+                </InputLabel>
+                <TimezoneFormat />
               </div>
-              <div className={styles.home_section_container}>
-                <div
-                  className={styles.timezoneFormat_title}
-                  title={tooltips.timezoneFormat}
-                >
-                  <InputLabel className={styles.text_align_center}>
-                    {inputLabels.timezoneFormat}
-                  </InputLabel>
-                  <TimezoneFormat />
-                </div>
+            </div>
+            <div className={styles.search_timezone_container}>
+              <div
+                className={styles.origin_timezone_tooltip}
+                title={tooltips.timeZone}
+              >
+                <InputLabel className={styles.text_align_center}>
+                  {inputLabels.timezone}
+                </InputLabel>
+                <OriginTimeZone />
               </div>
-              <div className={styles.search_timezone_container}>
-                <div
-                  className={styles.origin_timezone_tooltip}
-                  title={tooltips.timeZone}
-                >
-                  <InputLabel className={styles.text_align_center}>
-                    {inputLabels.timezone}
-                  </InputLabel>
-                  <OriginTimeZone />
-                </div>
-                <div className={styles.current_container}>
-                  <div title={tooltips.current_origin}>
-                    <CurrentOrigin />
-                  </div>
+              <div className={styles.current_container}>
+                <div title={tooltips.current_origin}>
+                  <CurrentOrigin />
                 </div>
               </div>
             </div>
-            <OutputList />
-          </DSTProvider>
-        </Suspense>
+          </div>
+          <OutputList />
+        </DSTProvider>
         {instData && (
           <div className={styles.ins_div}>
             <Instructions {...instData} />

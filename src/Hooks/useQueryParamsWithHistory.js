@@ -1,27 +1,51 @@
-import { useCallback, useMemo } from 'react';
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from 'next/navigation';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
-const useQueryParamsWithHistory = () => {
+const QUERY_CHANGE_EVENT = 'queryparamschange';
+
+const normalizeQueryString = (value) => {
+  if (!value) return '';
+  return value.startsWith('?') ? value.slice(1) : value;
+};
+
+const useQueryParamsWithHistory = (initialQueryString = '') => {
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const queryString = searchParams.toString();
-
-  const queryObj = useMemo(
-    () => Object.fromEntries(searchParams.entries()),
-    [queryString],
+  const [queryString, setQueryString] = useState(() =>
+    normalizeQueryString(initialQueryString),
   );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const readLocation = () => {
+      const nextQuery = normalizeQueryString(window.location.search || '');
+      setQueryString((prev) => (prev === nextQuery ? prev : nextQuery));
+    };
+
+    readLocation();
+    window.addEventListener('popstate', readLocation);
+    window.addEventListener(QUERY_CHANGE_EVENT, readLocation);
+
+    return () => {
+      window.removeEventListener('popstate', readLocation);
+      window.removeEventListener(QUERY_CHANGE_EVENT, readLocation);
+    };
+  }, []);
+
+  const queryObj = useMemo(() => {
+    if (!queryString) return {};
+    return Object.fromEntries(new URLSearchParams(queryString).entries());
+  }, [queryString]);
 
   const updateSearchParam = useCallback(
     (params, isReset, isReplace) => {
-      const sParams = new URLSearchParams(queryString);
+      if (typeof window === 'undefined') return;
+
+      const baseQuery = normalizeQueryString(window.location.search || '');
+      const sParams = new URLSearchParams(baseQuery);
       const query = Object.fromEntries(sParams.entries());
       const newParams = { ...query, ...params };
 
@@ -40,8 +64,11 @@ const useQueryParamsWithHistory = () => {
       } else {
         window.history.pushState(null, '', newUrl);
       }
+
+      setQueryString(newQueryString);
+      window.dispatchEvent(new Event(QUERY_CHANGE_EVENT));
     },
-    [queryString],
+    [],
   );
 
   const reset = useCallback(() => {

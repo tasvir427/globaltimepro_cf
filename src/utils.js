@@ -1310,6 +1310,26 @@ const reactSelectStyles = {
 
 const encodeStr = (str) => encodeURIComponent(str);
 
+const buildQueryString = (searchParams = {}) => {
+  if (!searchParams) return '';
+  const sp = new URLSearchParams();
+
+  Object.entries(searchParams).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((item) => {
+        if (item != null) sp.append(key, item);
+      });
+      return;
+    }
+
+    if (value != null) {
+      sp.set(key, value);
+    }
+  });
+
+  return sp.toString();
+};
+
 const iconFaArrowRight = <FaArrowRight />;
 const iconFaXTwitter = (
   <FaXTwitter
@@ -1789,6 +1809,7 @@ export {
   calculateWeights,
   adjustedOffset,
   encodeStr,
+  buildQueryString,
   reactSelectStyles,
   toNato,
 };

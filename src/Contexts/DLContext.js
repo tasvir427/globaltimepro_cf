@@ -24,9 +24,9 @@ import {
 const DLContext = createContext();
 export const useDL = () => use(DLContext);
 
-const DLProvider = ({ children }) => {
+const DLProvider = ({ children, initialQueryString }) => {
   const { updateSearchParam, queryString, queryObj } =
-    useQueryParamsWithHistory();
+    useQueryParamsWithHistory(initialQueryString);
 
   const {
     isLoading,

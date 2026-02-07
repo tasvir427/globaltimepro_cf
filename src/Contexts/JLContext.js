@@ -23,9 +23,9 @@ import {
 const JLContext = createContext();
 export const useJL = () => use(JLContext);
 
-const JLProvider = ({ children, defaultValue }) => {
+const JLProvider = ({ children, defaultValue, initialQueryString }) => {
   const { updateSearchParam, queryString, queryObj, params } =
-    useQueryParamsWithHistory();
+    useQueryParamsWithHistory(initialQueryString);
 
   const { getTZList, userCity } = useTimezone();
 

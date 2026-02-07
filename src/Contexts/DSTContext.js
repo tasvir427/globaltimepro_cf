@@ -30,9 +30,9 @@ import {
 const DSTContext = createContext();
 export const useDST = () => use(DSTContext);
 
-const DSTProvider = ({ children, defaultValue }) => {
+const DSTProvider = ({ children, defaultValue, initialQueryString }) => {
   const { updateSearchParam, queryString, queryObj, params } =
-    useQueryParamsWithHistory();
+    useQueryParamsWithHistory(initialQueryString);
   const { getTZList, userCity } = useTimezone();
 
   const { originTZKey, isReset, redirected, timezoneFormat } = useMemo(() => {

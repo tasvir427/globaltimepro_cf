@@ -28,12 +28,17 @@ import {
 const TZContext = createContext();
 export const useTZ = () => use(TZContext);
 
-const TZProvider = ({ children, defaultValue, outputOnly }) => {
+const TZProvider = ({
+  children,
+  defaultValue,
+  outputOnly,
+  initialQueryString,
+}) => {
   const prevDestinationCnt = useRef(0);
   const outputDiv = useRef(null);
 
   const { updateSearchParam, queryString, queryObj, pathname, params } =
-    useQueryParamsWithHistory();
+    useQueryParamsWithHistory(initialQueryString);
 
   const { timeNow, timeNowTZ, getTZList, userCity } = useTimezone();
 
