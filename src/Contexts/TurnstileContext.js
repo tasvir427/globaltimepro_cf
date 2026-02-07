@@ -16,7 +16,6 @@ export const useRecaptcha = () => use(RecaptchaContext);
 const RecaptchaProvider = ({ children }) => {
   const [isHuman, setIsHuman] = useState(false);
   const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
-  const [shouldLoadRecaptcha, setShouldLoadRecaptcha] = useState(false);
 
   useEffect(() => {
     const previouslyVerified = sessionStorage.getItem('recaptcha_verified');
@@ -26,44 +25,10 @@ const RecaptchaProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (isHuman || shouldLoadRecaptcha) {
-      return;
-    }
-
-    const handleUserInteraction = () => {
-      setShouldLoadRecaptcha(true);
-    };
-
-    const interactionEvents = [
-      'pointerdown',
-      'keydown',
-      'scroll',
-      'touchstart',
-    ];
-
-    interactionEvents.forEach((eventName) => {
-      window.addEventListener(eventName, handleUserInteraction, {
-        passive: true,
-      });
-    });
-
-    return () => {
-      interactionEvents.forEach((eventName) => {
-        window.removeEventListener(eventName, handleUserInteraction);
-      });
-    };
-  }, [isHuman, shouldLoadRecaptcha]);
-
-  useEffect(() => {
-    if (
-      !isHuman &&
-      shouldLoadRecaptcha &&
-      recaptchaLoaded &&
-      window.grecaptcha
-    ) {
+    if (!isHuman && recaptchaLoaded && window.grecaptcha) {
       initializeRecaptcha();
     }
-  }, [isHuman, shouldLoadRecaptcha, recaptchaLoaded, initializeRecaptcha]);
+  }, [isHuman, recaptchaLoaded]);
 
   const initializeRecaptcha = useCallback(() => {
     try {
@@ -118,17 +83,14 @@ const RecaptchaProvider = ({ children }) => {
   return (
     <RecaptchaContext value={{ isHuman }}>
       {children}
-      {shouldLoadRecaptcha &&
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
-          <Script
-            src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-            strategy="afterInteractive"
-            onLoad={() => setRecaptchaLoaded(true)}
-            onError={() => {
-              console.error('Failed to load reCAPTCHA');
-            }}
-          />
-        )}
+      <Script
+        src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+        strategy="afterInteractive"
+        onLoad={() => setRecaptchaLoaded(true)}
+        onError={() => {
+          console.error('Failed to load reCAPTCHA');
+        }}
+      />
     </RecaptchaContext>
   );
 };
