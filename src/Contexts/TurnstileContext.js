@@ -54,6 +54,17 @@ const RecaptchaProvider = ({ children }) => {
     };
   }, [isHuman, shouldLoadRecaptcha]);
 
+  useEffect(() => {
+    if (
+      !isHuman &&
+      shouldLoadRecaptcha &&
+      recaptchaLoaded &&
+      window.grecaptcha
+    ) {
+      initializeRecaptcha();
+    }
+  }, [isHuman, shouldLoadRecaptcha, recaptchaLoaded, initializeRecaptcha]);
+
   const initializeRecaptcha = useCallback(() => {
     try {
       window.grecaptcha.ready(() => {
@@ -61,6 +72,23 @@ const RecaptchaProvider = ({ children }) => {
       });
     } catch (error) {
       console.error('reCAPTCHA initialization error:', error);
+    }
+  }, []);
+
+  const executeRecaptcha = useCallback(async () => {
+    try {
+      if (!window.grecaptcha) {
+        throw new Error('reCAPTCHA not loaded');
+      }
+
+      const token = await window.grecaptcha.execute(
+        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+        { action: 'homepage' },
+      );
+
+      await verifyToken(token);
+    } catch (error) {
+      console.error('reCAPTCHA execution error:', error);
     }
   }, []);
 
@@ -86,34 +114,6 @@ const RecaptchaProvider = ({ children }) => {
       console.error('reCAPTCHA verification error:', error);
     }
   };
-
-  const executeRecaptcha = useCallback(async () => {
-    try {
-      if (!window.grecaptcha) {
-        throw new Error('reCAPTCHA not loaded');
-      }
-
-      const token = await window.grecaptcha.execute(
-        process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-        { action: 'homepage' },
-      );
-
-      await verifyToken(token);
-    } catch (error) {
-      console.error('reCAPTCHA execution error:', error);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (
-      !isHuman &&
-      shouldLoadRecaptcha &&
-      recaptchaLoaded &&
-      window.grecaptcha
-    ) {
-      initializeRecaptcha();
-    }
-  }, [isHuman, shouldLoadRecaptcha, recaptchaLoaded, initializeRecaptcha]);
 
   return (
     <RecaptchaContext value={{ isHuman }}>
