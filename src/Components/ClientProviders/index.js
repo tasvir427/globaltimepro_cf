@@ -77,8 +77,8 @@ const ClientProviders = () => {
       <div id="client-providers">
         <RecaptchaProvider>
           <ConditionalGA4 />
-          <ScrollToTop />
         </RecaptchaProvider>
+        <ScrollToTop />
         <ToastContainer
           position="top-center"
           autoClose={2000}
