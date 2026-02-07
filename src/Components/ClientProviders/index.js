@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { memo, useEffect } from 'react';
 import { Bounce, ToastContainer } from 'react-toastify';
@@ -34,39 +34,10 @@ const ClientProviders = () => {
             },
             60 * 60 * 1000,
           );
-
-          // Listen for new service worker
-          registration.addEventListener('updatefound', () => {
-            const newWorker = registration.installing;
-            console.log('New service worker found:', newWorker?.state);
-
-            newWorker?.addEventListener('statechange', () => {
-              if (
-                newWorker.state === 'installed' &&
-                navigator.serviceWorker.controller
-              ) {
-                // New service worker is installed and waiting
-                console.log('New content is available!');
-
-                // Optional: Show a "Update available" notification to user
-                if (
-                  window.confirm('New version available! Reload to update?')
-                ) {
-                  window.location.reload();
-                }
-              }
-            });
-          });
         } catch (error) {
           console.error('Service Worker registration failed:', error);
         }
       };
-
-      // Also listen for controller change (when new SW takes control)
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        console.log('Service Worker controller changed - reloading page');
-        window.location.reload();
-      });
 
       registerServiceWorker();
     }
