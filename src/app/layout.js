@@ -1,18 +1,57 @@
 import { memo } from 'react';
 import localFont from 'next/font/local';
-import { PATHS } from '@/paramsData';
-import { getMetaData, SITE_URL } from '@/utils';
+import { SITE_URL, siteSchemaData } from '@/utils';
 import { Footer, ClientProviders } from '@/Components';
 import './globals.css';
 
-export const generateMetadata = async () => {
-  const m = await getMetaData(PATHS.timezoneConverter);
-  return { metadataBase: new URL(SITE_URL), ...m };
+export const metadata = {
+  metadataBase: new URL(SITE_URL),
+  applicationName: 'Global Time Pro',
+  title: {
+    default: 'Global Time Pro',
+    template: '%s | Global Time Pro',
+  },
+  description:
+    'Timezone conversion, DST checks, jet lag planning, and timezone data export in one fast web app.',
+  alternates: {
+    canonical: SITE_URL,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'Global Time Pro',
+    url: SITE_URL,
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Global Time Pro',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@GlobalTimePro',
+    creator: '@GlobalTimePro',
+    images: ['/opengraph-image.png'],
+  },
 };
 
 export const viewport = {
   themeColor: '#1565C0',
-  viewport: { width: 'device-width', initialScale: 1 },
+  width: 'device-width',
+  initialScale: 1,
 };
 
 const pretendard = localFont({
@@ -24,7 +63,6 @@ const pretendard = localFont({
   display: 'swap',
   variable: '--theme-font',
   preload: true,
-  display: 'swap',
 });
 
 const RootLayout = ({ children }) => {
@@ -40,6 +78,11 @@ const RootLayout = ({ children }) => {
           <div className="right_ad_box" />
         </div>
         <ClientProviders />
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchemaData) }}
+        />
       </body>
     </html>
   );

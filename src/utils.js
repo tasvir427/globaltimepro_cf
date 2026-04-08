@@ -48,7 +48,7 @@ import { PiSwapFill, PiExportLight, PiAirplaneTakeoff } from 'react-icons/pi';
 import { TbWorldQuestion } from 'react-icons/tb';
 import { IoClose } from 'react-icons/io5';
 import { IoMdUndo, IoMdRedo } from 'react-icons/io';
-import { PATHS, PATHS_REVERSE } from '@/paramsData';
+import { PATHS, PATHS_REVERSE, DATES } from '@/paramsData';
 import timezones from '@/generated/timezones';
 import styles from '@/utils.module.css';
 
@@ -691,8 +691,46 @@ const adjustedOffset = ({ scrollDirection, scrollOffset }, itemSizeDiff) => {
   return newOffset;
 };
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL;
-const OG_IMG = 'https://www.globaltimepro.com/opengraph-image.png';
+const FALLBACK_SITE_URL = 'https://www.globaltimepro.com';
+const toPublicOrigin = (value) => {
+  if (!value) return null;
+
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    const isLocalhost =
+      host === 'localhost' ||
+      host === '127.0.0.1' ||
+      host === '0.0.0.0' ||
+      host.endsWith('.local');
+
+    return isLocalhost ? null : url.origin;
+  } catch {
+    return null;
+  }
+};
+
+const SITE_URL =
+  toPublicOrigin(process.env.SITE_URL) ||
+  toPublicOrigin(process.env.NEXT_PUBLIC_SITE_URL) ||
+  FALLBACK_SITE_URL;
+const SITE_NAME = 'Global Time Pro';
+const TWITTER_HANDLE = '@GlobalTimePro';
+const OG_IMG = `${SITE_URL}/opengraph-image.png`;
+const OG_IMG_WIDTH = 1200;
+const OG_IMG_HEIGHT = 630;
+
+const normalizePagePath = (page = '') => String(page).replace(/^\/+|\/+$/g, '');
+
+const toAbsoluteUrl = (page = '') => {
+  const path = normalizePagePath(page);
+  return path ? `${SITE_URL}/${path}` : SITE_URL;
+};
+
+const getDateByPath = (page = '') => {
+  const normalized = normalizePagePath(page);
+  return DATES[normalized] || DATES[page] || null;
+};
 
 const getTZOptionValue = (opt) => {
   if (!opt) return null;
@@ -1673,6 +1711,44 @@ const getMetaData = async (page, defaultPage) => {
   return mod.metaData ? mod.metaData(path) : null;
 };
 
+const makeOgImageData = (title) => [
+  {
+    url: OG_IMG,
+    width: OG_IMG_WIDTH,
+    height: OG_IMG_HEIGHT,
+    alt: title || SITE_NAME,
+  },
+];
+
+const siteSchemaData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        '@id': `${SITE_URL}/#logo`,
+        url: `${SITE_URL}/icon-512x512.png`,
+        width: 512,
+        height: 512,
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: SITE_NAME,
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      inLanguage: 'en-US',
+    },
+  ],
+};
+
 const getSchema = ({
   name,
   description,
@@ -1681,68 +1757,154 @@ const getSchema = ({
   featureList,
   steps,
 }) => {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name,
-    description,
-    url: `${SITE_URL}/${page}`,
-    image: OG_IMG,
-    publisher: {
-      '@type': 'Organization',
-      name: 'Global Time Pro',
-      logo: {
-        '@type': 'ImageObject',
-        url: OG_IMG,
-      },
+  const normalizedPage = normalizePagePath(page);
+  const canonicalUrl = toAbsoluteUrl(normalizedPage);
+  const dateModified = getDateByPath(normalizedPage) || undefined;
+  const imageId = `${canonicalUrl}#primaryimage`;
+  const pageId = `${canonicalUrl}#webpage`;
+  const appId = `${canonicalUrl}#webapplication`;
+  const howToId = `${canonicalUrl}#howto`;
+  const normalizedSteps = Array.isArray(steps)
+    ? steps.filter((step) => step?.name && step?.description)
+    : [];
+
+  const graph = [
+    {
+      '@type': 'ImageObject',
+      '@id': imageId,
+      url: OG_IMG,
+      width: OG_IMG_WIDTH,
+      height: OG_IMG_HEIGHT,
+      caption: name,
     },
-    applicationCategory,
-    operatingSystem: 'Any',
-    softwareVersion: '1.1.1.1',
-    featureList,
-    mainEntity: {
-      '@type': 'HowTo',
+    {
+      '@type': 'WebPage',
+      '@id': pageId,
+      url: canonicalUrl,
       name,
       description,
-      step: steps.map((step) => ({
+      inLanguage: 'en-US',
+      isPartOf: {
+        '@id': `${SITE_URL}/#website`,
+      },
+      about: {
+        '@id': appId,
+      },
+      primaryImageOfPage: {
+        '@id': imageId,
+      },
+      ...(dateModified ? { dateModified } : {}),
+    },
+    {
+      '@type': 'WebApplication',
+      '@id': appId,
+      name,
+      description,
+      url: canonicalUrl,
+      image: {
+        '@id': imageId,
+      },
+      applicationCategory: Array.isArray(applicationCategory)
+        ? applicationCategory.join(', ')
+        : applicationCategory,
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript and a modern web browser.',
+      isAccessibleForFree: true,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+      },
+      featureList: Array.isArray(featureList) ? featureList : [],
+      publisher: {
+        '@id': `${SITE_URL}/#organization`,
+      },
+      inLanguage: 'en-US',
+      ...(dateModified ? { dateModified } : {}),
+    },
+  ];
+
+  if (normalizedSteps.length > 0) {
+    graph[1].mainEntity = { '@id': howToId };
+
+    graph.push({
+      '@type': 'HowTo',
+      '@id': howToId,
+      name,
+      description,
+      url: canonicalUrl,
+      image: OG_IMG,
+      inLanguage: 'en-US',
+      step: normalizedSteps.map((step, index) => ({
         '@type': 'HowToStep',
+        position: index + 1,
         name: step.name,
         text: step.description,
         image: OG_IMG,
+        url: `${canonicalUrl}#step-${index + 1}`,
       })),
-    },
+    });
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': graph,
   };
 };
 
 const getMeta = ({ title, description, page, manifest }) => {
+  const normalizedPage = normalizePagePath(page);
+  const canonicalUrl = toAbsoluteUrl(normalizedPage);
+  const dateModified = getDateByPath(normalizedPage) || undefined;
+  const ogImages = makeOgImageData(title);
+
   return {
     title,
     description,
-    robots: 'index, follow',
-    creator: 'GlobalTimePro',
-    publisher: 'GlobalTimePro',
+    applicationName: SITE_NAME,
+    creator: SITE_NAME,
+    publisher: SITE_NAME,
+    category: 'utilities',
+    referrer: 'origin-when-cross-origin',
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+        'max-video-preview': -1,
+      },
+    },
     alternates: {
-      canonical: `${SITE_URL}/${page}`,
+      canonical: canonicalUrl,
     },
     openGraph: {
       type: 'website',
-      url: `${SITE_URL}/${page}`,
+      locale: 'en_US',
+      url: canonicalUrl,
       title,
       description,
-      siteName: 'GlobalTimePro',
-      images: OG_IMG,
+      siteName: SITE_NAME,
+      images: ogImages,
+      ...(dateModified ? { modifiedTime: dateModified } : {}),
     },
     twitter: {
       card: 'summary_large_image',
-      site: '@GlobalTimePro',
+      site: TWITTER_HANDLE,
+      creator: TWITTER_HANDLE,
       title,
       description,
-      images: OG_IMG,
+      images: ogImages,
     },
     appleWebApp: {
       capable: true,
-      title: 'GlobalTimePro',
+      title: SITE_NAME,
       statusBarStyle: 'black-translucent',
+    },
+    other: {
+      'format-detection': 'telephone=no',
     },
     manifest,
   };
@@ -1823,6 +1985,7 @@ export {
   placeholders,
   inputLabels,
   SITE_URL,
+  siteSchemaData,
   flattenGroupedChildren,
   createGetHeight,
   getSelectedIndex,

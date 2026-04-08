@@ -44,8 +44,30 @@ async function importModuleIfExists(filepath) {
 }
 
 (async () => {
-  // SITE_URL: prefer env var, otherwise sensible default (your original).
-  const SITE_URL = process.env.SITE_URL || 'https://www.globaltimepro.com';
+  const FALLBACK_SITE_URL = 'https://www.globaltimepro.com';
+  const toPublicOrigin = (value) => {
+    if (!value) return null;
+
+    try {
+      const url = new URL(value);
+      const host = url.hostname.toLowerCase();
+      const isLocalhost =
+        host === 'localhost' ||
+        host === '127.0.0.1' ||
+        host === '0.0.0.0' ||
+        host.endsWith('.local');
+
+      return isLocalhost ? null : url.origin;
+    } catch {
+      return null;
+    }
+  };
+
+  // SITE_URL: prefer explicit production-safe origin, fallback to primary domain.
+  const SITE_URL =
+    toPublicOrigin(process.env.SITE_URL) ||
+    toPublicOrigin(process.env.NEXT_PUBLIC_SITE_URL) ||
+    FALLBACK_SITE_URL;
 
   const paramsPath = findExisting(paramsCandidates);
   let PATHS = {},
@@ -86,30 +108,56 @@ async function importModuleIfExists(filepath) {
   }
 
   // --- Generate robots.txt content ---
+  const asArray = (value) => (Array.isArray(value) ? value : [value]);
+  const lineFromValue = (label, value) =>
+    asArray(value)
+      .filter(Boolean)
+      .map((entry) => `${label}: ${entry}`)
+      .join('\n');
+
   let robotsTxt = '';
   if (robotsObj) {
-    const rules = robotsObj.rules || {};
-    const ua = rules.userAgent ?? '*';
-    robotsTxt += `User-agent: ${ua}\n`;
-    if (rules.allow) robotsTxt += `Allow: ${rules.allow}\n`;
-    if (rules.disallow) robotsTxt += `Disallow: ${rules.disallow}\n`;
-    if (Array.isArray(robotsObj.sitemap)) {
-      robotsObj.sitemap.forEach((s) => (robotsTxt += `Sitemap: ${s}\n`));
-    } else if (robotsObj.sitemap) {
-      robotsTxt += `Sitemap: ${robotsObj.sitemap}\n`;
-    } else {
-      robotsTxt += `Sitemap: ${SITE_URL}/sitemap.xml\n`;
-    }
+    const rulesList = Array.isArray(robotsObj.rules)
+      ? robotsObj.rules
+      : [robotsObj.rules || { userAgent: '*' }];
+
+    robotsTxt = rulesList
+      .map((rule) => {
+        const userAgentLines = lineFromValue(
+          'User-agent',
+          rule.userAgent || '*',
+        );
+        const allowLines = lineFromValue('Allow', rule.allow);
+        const disallowLines = lineFromValue('Disallow', rule.disallow);
+
+        return [userAgentLines, allowLines, disallowLines]
+          .filter(Boolean)
+          .join('\n');
+      })
+      .filter(Boolean)
+      .join('\n\n');
+
+    const sitemapLines = lineFromValue(
+      'Sitemap',
+      robotsObj.sitemap || `${SITE_URL}/sitemap.xml`,
+    );
+    const hostLine = robotsObj.host ? `Host: ${robotsObj.host}` : '';
+
+    robotsTxt = [robotsTxt, sitemapLines, hostLine]
+      .filter(Boolean)
+      .join('\n\n');
   } else {
     // fallback
-    robotsTxt =
-      [
-        'User-agent: *',
-        'Allow: /',
-        'Disallow: /private/',
-        `Sitemap: ${SITE_URL}/sitemap.xml`,
-      ].join('\n') + '\n';
+    robotsTxt = [
+      'User-agent: *',
+      'Allow: /',
+      'Disallow: /private/',
+      '',
+      `Sitemap: ${SITE_URL}/sitemap.xml`,
+    ].join('\n');
   }
+
+  if (!robotsTxt.endsWith('\n')) robotsTxt += '\n';
 
   fs.writeFileSync(path.join(outDir, 'robots.txt'), robotsTxt, 'utf8');
   console.log('Wrote public/robots.txt');
@@ -121,7 +169,9 @@ async function importModuleIfExists(filepath) {
     : [];
 
   // Remove falsy and ensure leading slash trimmed in join
-  const uniquePaths = Array.from(new Set(pathValues.filter(Boolean)));
+  const uniquePaths = Array.from(new Set(pathValues.filter(Boolean))).sort(
+    (a, b) => a.localeCompare(b),
+  );
 
   // Compose xml
   const xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9';

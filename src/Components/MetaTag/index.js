@@ -1,10 +1,16 @@
 import { memo } from 'react';
-import Script from 'next/script';
 
-const MetaTag = ({ page, schemaData }) => (
-  <Script type="application/ld+json" id={`${page}-ld`}>
-    {JSON.stringify(schemaData)}
-  </Script>
-);
+const MetaTag = ({ page, schemaData }) => {
+  const scriptId = `${String(page || 'page').replace(/[^a-z0-9-]/gi, '-')}-ld`;
+
+  return (
+    <script
+      id={scriptId}
+      type="application/ld+json"
+      suppressHydrationWarning
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+    />
+  );
+};
 
 export default memo(MetaTag);
