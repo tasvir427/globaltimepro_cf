@@ -19,6 +19,16 @@
   line-height: 1.6;
 }
 
+.feedbackContact {
+  margin-bottom: 1rem !important;
+}
+
+.feedbackContact a {
+  color: var(--tc);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
 .socialIcons {
   display: flex;
   justify-content: center;

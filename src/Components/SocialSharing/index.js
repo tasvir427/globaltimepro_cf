@@ -7,8 +7,10 @@ import {
   iconFaXTwitter,
   SITE_URL,
 } from '@/utils';
-import Feedback from '../Feedback';
 import styles from './styles.module.css';
+
+const feedbackEmail =
+  process.env.NEXT_PUBLIC_FEEDBACK_EMAIL || 'globaltimeprocom@gmail.com';
 
 const SocialSharing = ({ page, title, text, hashtags }) => {
   const pageURL = encodeStr(`${SITE_URL}/${page}`);
@@ -16,7 +18,10 @@ const SocialSharing = ({ page, title, text, hashtags }) => {
 
   return (
     <section className={styles.socialSharing}>
-      <Feedback />
+      <p className={styles.feedbackContact}>
+        Share your feedback:{' '}
+        <a href={`mailto:${feedbackEmail}`}>{feedbackEmail}</a>
+      </p>
       <h2>Share Our Tool</h2>
       <p>
         Love our {title}? Share it with your colleagues and friends on social
