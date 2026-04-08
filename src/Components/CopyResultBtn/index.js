@@ -6,7 +6,7 @@ import { useQueryParamsWithHistory } from '@/Hooks';
 import { icon2MdContentCopy, tooltips } from '@/utils';
 
 const CopyResultBtn = () => {
-  const { copyLink } = useQueryParamsWithHistory();
+  const { copyLink } = useQueryParamsWithHistory('', { listenToLocation: false });
 
   return (
     <CustomBtn title={tooltips.copy_result} onClick={copyLink}>

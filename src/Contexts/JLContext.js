@@ -27,7 +27,7 @@ const JLProvider = ({ children, defaultValue, initialQueryString }) => {
   const { updateSearchParam, queryString, queryObj, params } =
     useQueryParamsWithHistory(initialQueryString);
 
-  const { getTZList, userCity } = useTimezone();
+  const { getTZList, getCurrentTZData, userCity } = useTimezone();
 
   const jlGetTZOptionLabel = useCallback((opt) => getTZOptionLabel(opt), []);
 
@@ -91,10 +91,7 @@ const JLProvider = ({ children, defaultValue, initialQueryString }) => {
     return map;
   }, [tzCities]);
 
-  const currentTZData = useMemo(
-    () => tzCities.find((tz) => tz.isCurrent),
-    [tzCities],
-  );
+  const currentTZData = useMemo(() => getCurrentTZData('city'), [getCurrentTZData]);
 
   const departureTZ = useMemo(() => {
     return departureTZKey ? tzData.get(departureTZKey) || null : null;

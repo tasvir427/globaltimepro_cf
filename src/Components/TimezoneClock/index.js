@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, memo, useCallback } from 'react';
+import { useState, useEffect, memo, useMemo } from 'react';
 import classNames from 'classnames';
 import { getTimeSegment, getTZTime } from '@/utils';
 import styles from './styles.module.css';
@@ -19,13 +19,13 @@ const TimezoneClock = ({
   const [time, setTime] = useState('');
   const [_date, setDate] = useState('');
 
-  const status = useCallback(() => {
+  const status = useMemo(() => {
     if (!isTZ) return;
 
     const originTZ = originTimeZone?.timezone || currentTZData?.timezone;
 
     return getTimeSegment(originTime, originTZ, timezone, isRealTime);
-  }, [originTime, isRealTime, originTimeZone, currentTZData, timezone]);
+  }, [originTime, isRealTime, originTimeZone, currentTZData, timezone, isTZ]);
 
   useEffect(() => {
     let interval;
@@ -45,10 +45,11 @@ const TimezoneClock = ({
       updateRealTime();
     } else {
       setTime(date);
+      setDate('');
     }
 
     return () => clearTimeout(interval);
-  }, [timezone, date, isRealTime, formatStr]);
+  }, [timezone, date, isRealTime, formatStr, timeFormat]);
 
   return (
     <>
@@ -57,9 +58,9 @@ const TimezoneClock = ({
           <span
             className={classNames(
               styles.tz_indicator,
-              styles[`${status()?.className}`],
+              styles[`${status?.className}`],
             )}
-            title={status()?.name}
+            title={status?.name}
           >
             <span />
           </span>

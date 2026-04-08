@@ -40,7 +40,8 @@ const TZProvider = ({
   const { updateSearchParam, queryString, queryObj, pathname, params } =
     useQueryParamsWithHistory(initialQueryString);
 
-  const { timeNow, timeNowTZ, getTZList, userCity } = useTimezone();
+  const { timeNow, timeNowTZ, getTZList, getCurrentTZData, userCity } =
+    useTimezone();
 
   const tzCities = useMemo(() => getTZList(), [getTZList]);
 
@@ -126,9 +127,19 @@ const TZProvider = ({
   }, [tzList]);
 
   const currentTZData = useMemo(
-    () => tzList.find((tz) => tz.isCurrent),
-    [tzList],
+    () => getCurrentTZData(timezoneFormat.value),
+    [getCurrentTZData, timezoneFormat.value],
   );
+
+  const tzCityByTimezone = useMemo(() => {
+    const map = new Map();
+    for (const tz of tzCities) {
+      if (!map.has(tz.timezone)) {
+        map.set(tz.timezone, tz);
+      }
+    }
+    return map;
+  }, [tzCities]);
 
   const originTimeZone = useMemo(() => {
     return originTZKey ? tzData.get(originTZKey) || null : null;
@@ -260,7 +271,7 @@ const TZProvider = ({
 
   const handleTimezoneFormat = useCallback(
     (value) => {
-      const tz = getTZList(value?.value).find((tz) => tz.isCurrent);
+      const tz = getCurrentTZData(value?.value);
       updateSearchParam({
         timezoneFormat: value?.value || '',
         originTimeZone:
@@ -273,7 +284,7 @@ const TZProvider = ({
         ),
       });
     },
-    [updateSearchParam],
+    [defaultValue, getCurrentTZData, updateSearchParam],
   );
 
   const handleSwap = useCallback(
@@ -319,11 +330,11 @@ const TZProvider = ({
       if (timezoneFormat.value === 'city') {
         return value;
       } else {
-        const tz = tzCities.find((c) => c.timezone === value);
+        const tz = tzCityByTimezone.get(value);
         return tz ? getTZOptionValue(tz) : '';
       }
     },
-    [timezoneFormat, tzCities],
+    [timezoneFormat, tzCityByTimezone],
   );
 
   const handlePlanJetLag = useCallback(
@@ -352,7 +363,7 @@ const TZProvider = ({
     }
 
     return `${newPath}?${queryString}` + '&noChange=true';
-  }, [pathname, queryString]);
+  }, [outputOnly, pathname, queryString]);
 
   useEffect(() => {
     if (!window.location.search || isReset || redirected) {

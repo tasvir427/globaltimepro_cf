@@ -9,7 +9,10 @@ const normalizeQueryString = (value) => {
   return value.startsWith('?') ? value.slice(1) : value;
 };
 
-const useQueryParamsWithHistory = (initialQueryString = '') => {
+const useQueryParamsWithHistory = (
+  initialQueryString = '',
+  { listenToLocation = true } = {},
+) => {
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -18,7 +21,7 @@ const useQueryParamsWithHistory = (initialQueryString = '') => {
   );
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (!listenToLocation || typeof window === 'undefined') return;
 
     const readLocation = () => {
       const nextQuery = normalizeQueryString(window.location.search || '');
@@ -33,7 +36,14 @@ const useQueryParamsWithHistory = (initialQueryString = '') => {
       window.removeEventListener('popstate', readLocation);
       window.removeEventListener(QUERY_CHANGE_EVENT, readLocation);
     };
-  }, []);
+  }, [listenToLocation]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!listenToLocation) {
+      setQueryString(normalizeQueryString(window.location.search || ''));
+    }
+  }, [listenToLocation]);
 
   const queryObj = useMemo(() => {
     if (!queryString) return {};
@@ -58,14 +68,15 @@ const useQueryParamsWithHistory = (initialQueryString = '') => {
       });
 
       const newQueryString = sParams.toString();
-      const newUrl = `?${newQueryString}`;
+      if (newQueryString === baseQuery) return;
+
+      const newUrl = newQueryString ? `?${newQueryString}` : window.location.pathname;
       if (isReplace) {
         window.history.replaceState(null, '', newUrl);
       } else {
         window.history.pushState(null, '', newUrl);
       }
 
-      setQueryString(newQueryString);
       window.dispatchEvent(new Event(QUERY_CHANGE_EVENT));
     },
     [],

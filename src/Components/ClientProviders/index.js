@@ -9,6 +9,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const ClientProviders = () => {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
+      let intervalId;
+
       const registerServiceWorker = async () => {
         try {
           const registration = await navigator.serviceWorker.register(
@@ -28,7 +30,7 @@ const ClientProviders = () => {
           registration.update();
 
           // Set up update checking every hour
-          setInterval(
+          intervalId = setInterval(
             () => {
               registration.update();
             },
@@ -40,6 +42,12 @@ const ClientProviders = () => {
       };
 
       registerServiceWorker();
+
+      return () => {
+        if (intervalId) {
+          clearInterval(intervalId);
+        }
+      };
     }
   }, []);
 

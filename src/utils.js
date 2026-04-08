@@ -197,6 +197,18 @@ const checkFields = [
   'identifiers',
   'upcomingDSTChange',
 ];
+const TZ_LIST_CACHE_TTL_MS = 5 * 60 * 1000;
+const TZ_LIST_CACHE_MAX_ENTRIES = 20;
+const tzListCache = new Map();
+
+const getTZListCacheKey = ({ fieldChecks = {}, countries = [], offsetIn }) => {
+  const fields = checkFields.filter((field) => fieldChecks[field]).join(',');
+  const countryList = Array.isArray(countries)
+    ? [...countries].sort((a, b) => a.localeCompare(b)).join(',')
+    : '';
+
+  return `${offsetIn || ''}|${fields}|${countryList}`;
+};
 
 const getAbbrevKey = (tz) => {
   const { countryCode, standardOffset, dstOffset } = tz;
@@ -205,6 +217,13 @@ const getAbbrevKey = (tz) => {
 
 const getTZList = ({ fieldChecks, countries, offsetIn }) => {
   const now = Date.now();
+  const cacheKey = getTZListCacheKey({ fieldChecks, countries, offsetIn });
+  const cached = tzListCache.get(cacheKey);
+
+  if (cached && now - cached.createdAt < TZ_LIST_CACHE_TTL_MS) {
+    return cached.value;
+  }
+
   const countrySet = Array.isArray(countries) ? new Set(countries) : new Set();
   const seen = new Set();
   const arr = [];
@@ -351,7 +370,15 @@ const getTZList = ({ fieldChecks, countries, offsetIn }) => {
       : isTimezone
         ? 'timezone'
         : 'standardAbbreviation';
-  return arr.sort((a, b) => a[sortBy]?.localeCompare(b[sortBy]));
+  const result = arr.sort((a, b) => a[sortBy]?.localeCompare(b[sortBy]));
+
+  tzListCache.set(cacheKey, { createdAt: now, value: result });
+  if (tzListCache.size > TZ_LIST_CACHE_MAX_ENTRIES) {
+    const oldestKey = tzListCache.keys().next().value;
+    tzListCache.delete(oldestKey);
+  }
+
+  return result;
 };
 
 const fileTypeOptions = [

@@ -33,7 +33,7 @@ export const useDST = () => use(DSTContext);
 const DSTProvider = ({ children, defaultValue, initialQueryString }) => {
   const { updateSearchParam, queryString, queryObj, params } =
     useQueryParamsWithHistory(initialQueryString);
-  const { getTZList, userCity } = useTimezone();
+  const { getTZList, getCurrentTZData, userCity } = useTimezone();
 
   const { originTZKey, isReset, redirected, timezoneFormat } = useMemo(() => {
     const sp = new URLSearchParams(queryString);
@@ -57,7 +57,7 @@ const DSTProvider = ({ children, defaultValue, initialQueryString }) => {
 
   const tzList = useMemo(() => {
     return getTZList(timezoneFormat.value);
-  }, [getTZList, timezoneFormat]);
+  }, [getTZList, timezoneFormat.value]);
 
   const tzSearchKeys = useMemo(
     () => getTZSearchKeys(timezoneFormat.value),
@@ -73,8 +73,8 @@ const DSTProvider = ({ children, defaultValue, initialQueryString }) => {
   }, [tzList]);
 
   const currentTZData = useMemo(
-    () => tzList.find((tz) => tz.isCurrent),
-    [tzList],
+    () => getCurrentTZData(timezoneFormat.value),
+    [getCurrentTZData, timezoneFormat.value],
   );
 
   const originTimeZone = useMemo(() => {
@@ -166,7 +166,7 @@ const DSTProvider = ({ children, defaultValue, initialQueryString }) => {
 
   const handleTimezoneFormat = useCallback(
     (value) => {
-      const tz = getTZList(value?.value).find((tz) => tz.isCurrent);
+      const tz = getCurrentTZData(value?.value);
       updateSearchParam({
         timezoneFormat: value?.value || '',
         originTimeZone:
@@ -175,7 +175,7 @@ const DSTProvider = ({ children, defaultValue, initialQueryString }) => {
           '',
       });
     },
-    [updateSearchParam, getTZList],
+    [defaultValue?.originTimeZone, getCurrentTZData, updateSearchParam],
   );
 
   useEffect(() => {

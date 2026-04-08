@@ -7,7 +7,7 @@ import { iconIoMdUndo, tooltips } from '@/utils';
 import styles from './styles.module.css';
 
 const UndoBtn = () => {
-  const { undo } = useQueryParamsWithHistory();
+  const { undo } = useQueryParamsWithHistory('', { listenToLocation: false });
 
   return (
     <CustomBtn title={tooltips.undo} onClick={undo} className={styles.undo_btn}>

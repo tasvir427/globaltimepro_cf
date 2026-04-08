@@ -2,6 +2,7 @@
   "name": "globaltimepro",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "generate:timezones": "node scripts/generate-timezones.mjs",
     "generate:sw-config": "node scripts/generate-sw-config.mjs",
@@ -11,7 +12,7 @@
     "start": "next start",
     "predev": "npm run generate:timezones",
     "dev": "npm run generate:timezones && next dev",
-    "dev:pages": "wrangler pages dev . --compatibility-date=2026-02-02",
+    "dev:pages": "wrangler pages dev out",
     "lint": "next lint"
   },
   "dependencies": {

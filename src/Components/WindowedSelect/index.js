@@ -19,13 +19,14 @@ const WindowedSelect = ({
   searchKeys = ['label'],
   ...passedProps
 }) => {
+  const options = passedProps.options || [];
   const [_inputValue, setInputValue] = useState('');
-  const [filteredOptions, setFilteredOptions] = useState(passedProps.options);
+  const [filteredOptions, setFilteredOptions] = useState(options);
   const inputValue = useDeferredValue(_inputValue);
 
   const normalizedOptions = useMemo(() => {
-    if (!passedProps.options || !searchKeys.length) return [];
-    return passedProps.options.map((item, idx) => {
+    if (!options.length || !searchKeys.length) return [];
+    return options.map((item, idx) => {
       const norm = { __origIndex: idx, __item: item };
       for (const key of searchKeys) {
         const val = item[key] == null ? '' : String(item[key]);
@@ -34,12 +35,12 @@ const WindowedSelect = ({
       }
       return norm;
     });
-  }, [passedProps.options, searchKeys]);
+  }, [options, searchKeys]);
 
   const weights = useMemo(() => calculateWeights(searchKeys), [searchKeys]);
 
   const fuse = useMemo(() => {
-    if (!searchKeys.length || !passedProps.options) return null;
+    if (!searchKeys.length || !options.length) return null;
     const fuseOptions = {
       keys: searchKeys.map((key) => ({ name: key, weight: weights[key] })),
       includeScore: true,
@@ -47,27 +48,27 @@ const WindowedSelect = ({
       minMatchCharLength: 1,
       ignoreLocation: true,
     };
-    return new Fuse(passedProps.options, fuseOptions);
-  }, [passedProps.options, searchKeys, weights]);
+    return new Fuse(options, fuseOptions);
+  }, [options, searchKeys, weights]);
 
   const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   const debouncedSearch = useDebouncedCallback((value) => {
     if (!value || !value.trim()) {
-      setFilteredOptions(passedProps.options || []);
+      setFilteredOptions(options);
       return;
     }
 
     const trimmed = value.trim();
     const tokens = trimmed.split(/\s+/).filter(Boolean);
     if (tokens.length === 0) {
-      setFilteredOptions(passedProps.options || []);
+      setFilteredOptions(options);
       return;
     }
 
     if (trimmed.length <= 2) {
       const lower = trimmed.toLowerCase();
-      const filtered = passedProps.options.filter((option) =>
+      const filtered = options.filter((option) =>
         searchKeys.some((key) => {
           const fv =
             option[key] == null ? '' : String(option[key]).toLowerCase();
@@ -82,6 +83,9 @@ const WindowedSelect = ({
     const PHRASE_BOOST_MULTIPLIER = 10;
 
     const tokensLower = tokens.map((t) => t.toLowerCase());
+    const tokenRegexes = tokensLower.map(
+      (token) => new RegExp(`\\b${escapeRegExp(token)}\\b`, 'i'),
+    );
     const phraseLower = trimmed.toLowerCase();
     const phraseRegex = new RegExp(`\\b${escapeRegExp(phraseLower)}\\b`, 'i');
 
@@ -93,8 +97,7 @@ const WindowedSelect = ({
         const fieldLower = norm[`${key}__lower`] || '';
 
         let matchedTokenCount = 0;
-        for (const t of tokensLower) {
-          const re = new RegExp(`\\b${escapeRegExp(t)}\\b`, 'i');
+        for (const re of tokenRegexes) {
           if (re.test(fieldLower)) matchedTokenCount += 1;
         }
 
@@ -128,7 +131,7 @@ const WindowedSelect = ({
         .search(extendedQuery)
         .map((r) => ({ item: r.item, score: r.score ?? Infinity }));
     } else {
-      fuseResults = passedProps.options.map((it) => ({
+      fuseResults = options.map((it) => ({
         item: it,
         score: Infinity,
       }));
@@ -186,8 +189,8 @@ const WindowedSelect = ({
   }, [inputValue, debouncedSearch]);
 
   useEffect(() => {
-    setFilteredOptions(passedProps.options);
-  }, [passedProps.options]);
+    setFilteredOptions(options);
+  }, [options]);
 
   const handleInputChange = useCallback(
     (newValue, actionMeta) => {
@@ -198,8 +201,8 @@ const WindowedSelect = ({
   );
 
   const isWindowed = useMemo(
-    () => passedProps.options.length >= windowThreshold,
-    [passedProps.options.length, windowThreshold],
+    () => options.length >= windowThreshold,
+    [options.length, windowThreshold],
   );
 
   return (

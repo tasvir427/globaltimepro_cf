@@ -6,7 +6,7 @@ import { iconRiResetLeftLine, tooltips } from '@/utils';
 import { useQueryParamsWithHistory } from '@/Hooks';
 
 const ResetBtn = () => {
-  const { reset } = useQueryParamsWithHistory();
+  const { reset } = useQueryParamsWithHistory('', { listenToLocation: false });
 
   return (
     <CustomBtn title={tooltips.reset} onClick={reset}>

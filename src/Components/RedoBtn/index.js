@@ -6,7 +6,7 @@ import { useQueryParamsWithHistory } from '@/Hooks';
 import { iconIoMdRedo, tooltips } from '@/utils';
 
 const RedoBtn = () => {
-  const { redo } = useQueryParamsWithHistory();
+  const { redo } = useQueryParamsWithHistory('', { listenToLocation: false });
 
   return (
     <CustomBtn title={tooltips.redo} onClick={redo}>

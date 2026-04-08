@@ -79,7 +79,8 @@ const CustomMenuList = (props) => {
 
   const totalMenuHeight = totalHeight + paddingBottom + paddingTop;
   const menuHeight = Math.min(maxHeight, totalMenuHeight);
-  const estimatedItemSize = Math.floor(totalHeight / itemCount);
+  const estimatedItemSize =
+    itemCount > 0 ? Math.floor(totalHeight / itemCount) : defaultH;
 
   const { innerRef, selectProps } = props;
   const { classNamePrefix, isMulti } = selectProps || {};
@@ -130,7 +131,7 @@ const CustomMenuList = (props) => {
         list.current.scrollTo(0);
       }
     }
-  }, [selectedIndex, props.options]);
+  }, [itemCount, selectedIndex]);
 
   const initialScrollOffset = useMemo(() => {
     if (selectedIndex > 0) {
