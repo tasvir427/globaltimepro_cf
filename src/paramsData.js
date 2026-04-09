@@ -141,6 +141,10 @@ const PATHS = {
   dstChecker: 'dst-checker',
   jetLagPlanner: 'jet-lag-planner',
   downloadTimezoneList: 'download-timezone-list',
+  about: 'about',
+  contact: 'contact',
+  privacyPolicy: 'privacy-policy',
+  terms: 'terms',
 
   jetLagFromMumbaiToLondon: 'jet-lag/from/mumbai/to/london',
   jetLagFromSydneyToLosAngeles: 'jet-lag/from/sydney/to/los-angeles',
@@ -288,6 +292,10 @@ const DATES = {
   [PATHS.dstChecker]: '2025-10-01T00:00:00Z',
   [PATHS.jetLagPlanner]: '2025-10-01T00:00:00Z',
   [PATHS.downloadTimezoneList]: '2025-10-01T00:00:00Z',
+  [PATHS.about]: '2026-04-09T00:00:00Z',
+  [PATHS.contact]: '2026-04-09T00:00:00Z',
+  [PATHS.privacyPolicy]: '2026-04-09T00:00:00Z',
+  [PATHS.terms]: '2026-04-09T00:00:00Z',
 
   [PATHS.jetLagFromMumbaiToLondon]: '2025-10-01T00:00:00Z',
   [PATHS.jetLagFromSydneyToLosAngeles]: '2025-10-01T00:00:00Z',

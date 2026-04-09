@@ -6,18 +6,17 @@ import styles from './styles.module.css';
 const CustomHeader = ({ title, subtitle, note }) => {
   const links = pageLinks(title);
   const otherPages = links.other;
-  const currentPage = links.current[0];
 
   return (
     <header>
-      <Link href={currentPage.href} className={styles.home_head}>
+      <span className={styles.home_head}>
         {title}
         {note ? (
           <span className={styles.home_head_note}>{note}</span>
         ) : (
           iconTbWorldQuestion
         )}
-      </Link>
+      </span>
       <span className={styles.home_head_bottom_txt}>{subtitle}</span>
       <div className={styles.linkContainer}>
         {otherPages.map((page, i) => (

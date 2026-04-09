@@ -65,9 +65,52 @@ const pretendard = localFont({
   preload: true,
 });
 
+const normalizePublisherId = (value) => {
+  if (!value) return null;
+
+  const trimmed = String(value).trim();
+  if (!trimmed) return null;
+
+  if (trimmed.startsWith('ca-pub-')) return trimmed;
+
+  if (trimmed.startsWith('pub-')) {
+    return `ca-${trimmed}`;
+  }
+
+  if (/^\d+$/.test(trimmed)) {
+    return `ca-pub-${trimmed}`;
+  }
+
+  return null;
+};
+
+const ADSENSE_PUBLISHER_ID = normalizePublisherId(
+  process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID ||
+    process.env.NEXT_PUBLIC_ADSENSE_CLIENT,
+);
+
+const ADSENSE_SCRIPT_SRC = ADSENSE_PUBLISHER_ID
+  ? `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`
+  : null;
+
 const RootLayout = ({ children }) => {
   return (
     <html lang="en" className={pretendard.variable} suppressHydrationWarning>
+      <head>
+        {ADSENSE_PUBLISHER_ID && (
+          <meta
+            name="google-adsense-account"
+            content={ADSENSE_PUBLISHER_ID}
+          />
+        )}
+        {ADSENSE_SCRIPT_SRC && (
+          <script
+            async
+            src={ADSENSE_SCRIPT_SRC}
+            crossOrigin="anonymous"
+          />
+        )}
+      </head>
       <body>
         <div id="root">
           <div className="left_ad_box" />

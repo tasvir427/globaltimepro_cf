@@ -1,0 +1,77 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hero,
+.section {
+  background: var(--bg);
+  border: 0.8px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.hero h1,
+.section h2 {
+  margin: 0 0 8px;
+  color: var(--tc);
+}
+
+.hero p,
+.section p {
+  margin: 0;
+  color: var(--fc-2);
+  line-height: 1.6;
+}
+
+.section h2 {
+  margin-bottom: 10px;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.card {
+  background: var(--light);
+  border: 0.8px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.card h3 {
+  margin: 0 0 6px;
+  color: var(--tc);
+}
+
+.card p {
+  margin: 0 0 10px;
+}
+
+.card a,
+.inlineLinks a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.card a:hover,
+.inlineLinks a:hover {
+  color: var(--link-hover);
+}
+
+.inlineLinks {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+}
+
+@media (max-width: 720px) {
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+}

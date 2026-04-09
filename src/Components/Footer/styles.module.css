@@ -1,14 +1,75 @@
 .footer {
   background-color: var(--tc);
-  text-align: center;
-  padding: 1rem 0;
-  font-family: Arial;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0.9rem 0.8rem;
+  font-family: var(--theme-font), Arial, sans-serif;
   font-weight: 500;
   width: 100%;
   border-radius: 8px;
+  box-sizing: border-box;
 }
 
-.footer p {
+.linkRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0;
+  text-align: center;
+}
+
+.linkRow:last-of-type {
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.linkRow a,
+.contact a {
+  color: var(--light);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: from-font;
+  font-size: 12.9px;
+}
+
+.linkRow a:hover,
+.contact a:hover {
+  color: var(--bg-2);
+}
+
+.contact,
+.copy {
   margin: 0;
   color: var(--light);
+  text-align: center;
+}
+
+.contact {
+  overflow-wrap: anywhere;
+}
+
+.copy {
+  font-size: 12px;
+  opacity: 0.95;
+}
+
+@media (max-width: 560px) {
+  .footer {
+    padding: 0.8rem 0.55rem;
+    gap: 7px;
+  }
+
+  .linkRow {
+    gap: 7px 10px;
+  }
+
+  .linkRow a,
+  .contact a,
+  .contact {
+    font-size: 12.2px;
+  }
 }

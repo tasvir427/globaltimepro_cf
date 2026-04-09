@@ -1,0 +1,3 @@
+# AdSense publisher ID is not set yet.
+# Add NEXT_PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-XXXXXXXXXXXXXXXX (or pub-XXXXXXXXXXXXXXXX) to your environment.
+# Rebuild/deploy after updating the environment value.

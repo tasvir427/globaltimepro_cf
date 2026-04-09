@@ -168,36 +168,39 @@ async function importModuleIfExists(filepath) {
     ? Object.values(PATHS)
     : [];
 
-  // Remove falsy and ensure leading slash trimmed in join
-  const uniquePaths = Array.from(new Set(pathValues.filter(Boolean))).sort(
-    (a, b) => a.localeCompare(b),
-  );
+  // Always include homepage in sitemap and dedupe the rest.
+  const uniquePaths = Array.from(
+    new Set([
+      '/',
+      ...pathValues
+        .filter((p) => typeof p === 'string' && p.trim().length > 0)
+        .map((p) => p.trim()),
+    ]),
+  ).sort((a, b) => a.localeCompare(b));
 
   // Compose xml
   const xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9';
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
   xml += `<urlset xmlns="${xmlns}">\n`;
 
-  if (uniquePaths.length === 0) {
-    xml += `  <url>\n    <loc>${SITE_URL}/</loc>\n  </url>\n`;
-  } else {
-    for (const p of uniquePaths) {
-      const rel = String(p).replace(/^\/+|\/+$/g, '');
-      const cleaned = `${SITE_URL}/${rel}`;
+  for (const p of uniquePaths) {
+    const rel = String(p).replace(/^\/+|\/+$/g, '');
+    const cleaned = rel ? `${SITE_URL}/${rel}` : `${SITE_URL}/`;
 
-      const rawDate =
-        typeof DATES !== 'undefined' ? (DATES[p] ?? DATES[rel]) : null;
+    const rawDate =
+      typeof DATES !== 'undefined'
+        ? DATES[p] ?? DATES[rel] ?? (p === '/' ? DATES[''] : null)
+        : null;
 
-      let lastmod = null;
-      if (rawDate) {
-        const d = new Date(rawDate);
-        if (!Number.isNaN(d.valueOf())) lastmod = d.toISOString();
-      }
-
-      xml += `  <url>\n    <loc>${cleaned}</loc>\n`;
-      if (lastmod) xml += `    <lastmod>${lastmod}</lastmod>\n`;
-      xml += `  </url>\n`;
+    let lastmod = null;
+    if (rawDate) {
+      const d = new Date(rawDate);
+      if (!Number.isNaN(d.valueOf())) lastmod = d.toISOString();
     }
+
+    xml += `  <url>\n    <loc>${cleaned}</loc>\n`;
+    if (lastmod) xml += `    <lastmod>${lastmod}</lastmod>\n`;
+    xml += `  </url>\n`;
   }
 
   xml += `</urlset>\n`;

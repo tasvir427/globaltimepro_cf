@@ -7,10 +7,11 @@
     "generate:timezones": "node scripts/generate-timezones.mjs",
     "generate:sw-config": "node scripts/generate-sw-config.mjs",
     "generate:sitemap": "node scripts/generate-sitemap.mjs",
-    "prebuild": "npm run generate:timezones && npm run generate:sw-config && npm run generate:sitemap",
+    "generate:ads-txt": "node scripts/generate-ads-txt.mjs",
+    "prebuild": "npm run generate:timezones && npm run generate:sw-config && npm run generate:sitemap && npm run generate:ads-txt",
     "build": "next build",
     "start": "next start",
-    "predev": "npm run generate:timezones",
+    "predev": "npm run generate:timezones && npm run generate:ads-txt",
     "dev": "npm run generate:timezones && next dev",
     "dev:pages": "wrangler pages dev out",
     "lint": "next lint"

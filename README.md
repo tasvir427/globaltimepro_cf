@@ -1,37 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Global Time Pro
 
-## Getting Started
+Global Time Pro is a Next.js app for timezone conversion, DST checks, jet lag planning, and timezone data exports.
 
-First, run the development server:
+## Local Development
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start dev server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Build
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## AdSense Setup
 
-## Learn More
+This project is prepared for AdSense application with:
 
-To learn more about Next.js, take a look at the following resources:
+- Site-wide AdSense script injection in `src/app/layout.js`
+- `google-adsense-account` meta support in `<head>`
+- Auto-generated `public/ads.txt` during build/dev
+- Crawlable trust pages (`/about`, `/contact`, `/privacy-policy`, `/terms`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Set this environment variable in production:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+NEXT_PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-XXXXXXXXXXXXXXXX
+```
 
-## Deploy on Vercel
+Then redeploy. The build step generates:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+public/ads.txt
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# globaltimepro_cf
+with:
+
+```text
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+```
+
+## Related Scripts
+
+- `npm run generate:ads-txt` writes `public/ads.txt`
+- `npm run generate:sitemap` writes `public/sitemap.xml`
+- `npm run generate:sw-config` updates service worker config
