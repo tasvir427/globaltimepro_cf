@@ -7,17 +7,15 @@ import {
   FileType,
   OffsetChoice,
 } from './Parts';
-import {
-  CustomHeader,
-  InputLabel,
-  MetaTag,
-  SocialSharing,
-  UndoBtn,
-  RedoBtn,
-  ResetBtn,
-  CopyResultBtn,
-  Instructions,
-} from '@/Components';
+import CopyResultBtn from '@/Components/CopyResultBtn';
+import CustomHeader from '@/Components/CustomHeader';
+import InputLabel from '@/Components/InputLabel';
+import Instructions from '@/Components/Instructions';
+import MetaTag from '@/Components/MetaTag';
+import RedoBtn from '@/Components/RedoBtn';
+import ResetBtn from '@/Components/ResetBtn';
+import SocialSharing from '@/Components/SocialSharing';
+import UndoBtn from '@/Components/UndoBtn';
 import { PATHS } from '@/paramsData';
 import {
   buildQueryString,
@@ -27,7 +25,7 @@ import {
   inputLabels,
   tooltips,
 } from '@/utils';
-import { DLProvider } from '@/Contexts';
+import DLProvider from '@/Contexts/DLContext';
 import styles from './styles.module.css';
 
 export const generateMetadata = async () => {

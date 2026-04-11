@@ -1,9 +1,10 @@
 'use client';
 
 import { memo } from 'react';
-import { useJL } from '@/Contexts';
+import { useJL } from '@/Contexts/JLContext';
 import { DaysUntilContent } from '../index';
-import { ClientOnly, CustomCollapse } from '@/Components';
+import ClientOnly from '@/Components/ClientOnly';
+import CustomCollapse from '@/Components/CustomCollapse';
 
 const DaysUntil = () => {
   const { isDaysUntilDeparture } = useJL();

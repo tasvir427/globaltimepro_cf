@@ -3,8 +3,8 @@
 import { memo } from 'react';
 import classNames from 'classnames';
 import Link from 'next/link';
-import { OutputListItem } from '@/Components';
-import { useTZ } from '@/Contexts';
+import OutputListItem from '@/Components/OutputListItem';
+import { useTZ } from '@/Contexts/TZContext';
 import { iconFaAnglesLeft, iconFaAnglesRight, tooltips } from '@/utils';
 import styles from '../../styles.module.css';
 

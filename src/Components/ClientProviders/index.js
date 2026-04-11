@@ -2,8 +2,9 @@
 
 import { memo, useEffect } from 'react';
 import { Bounce, ToastContainer } from 'react-toastify';
-import { ConditionalGA4, ScrollToTop } from '@/Components';
-import { TurnstileProvider } from '@/Contexts';
+import ConditionalGA4 from '@/Components/ConditionalGA4';
+import ScrollToTop from '@/Components/ScrollToTop';
+import TurnstileProvider from '@/Contexts/TurnstileContext';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ClientProviders = () => {

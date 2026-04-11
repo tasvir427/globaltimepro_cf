@@ -3,8 +3,8 @@
 import { memo } from 'react';
 import moment from 'moment-timezone';
 import { tooltips } from '@/utils';
-import { useJL } from '@/Contexts';
-import { CustomDatePicker } from '@/Components';
+import { useJL } from '@/Contexts/JLContext';
+import CustomDatePicker from '@/Components/CustomDatePicker';
 import styles from '../../styles.module.css';
 
 const OriginTime = ({ name, ...rest }) => {

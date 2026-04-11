@@ -1,7 +1,8 @@
 import { memo } from 'react';
 import localFont from 'next/font/local';
 import { SITE_URL, siteSchemaData } from '@/utils';
-import { Footer, ClientProviders } from '@/Components';
+import DeferredClientProviders from '@/Components/DeferredClientProviders';
+import Footer from '@/Components/Footer';
 import './globals.css';
 
 export const metadata = {
@@ -120,7 +121,7 @@ const RootLayout = ({ children }) => {
           </main>
           <div className="right_ad_box" />
         </div>
-        <ClientProviders />
+        <DeferredClientProviders />
         <script
           type="application/ld+json"
           suppressHydrationWarning

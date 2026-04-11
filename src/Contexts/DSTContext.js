@@ -8,7 +8,8 @@ import {
   useEffect,
   memo,
 } from 'react';
-import { useQueryParamsWithHistory, useTimezone } from '@/Hooks';
+import useQueryParamsWithHistory from '@/Hooks/useQueryParamsWithHistory';
+import useTimezone from '@/Hooks/useTimezone';
 import {
   getTZOptionValue,
   getNextTransition,

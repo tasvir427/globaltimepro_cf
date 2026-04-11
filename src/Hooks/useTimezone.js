@@ -10,57 +10,98 @@ const validTypes = new Set(['city', 'name', 'abbreviation']);
 const sortByLabel = (list, key) =>
   list.sort((a, b) => (a[key] || '').localeCompare(b[key] || ''));
 
-const precomputedLists = (() => {
-  const city = [];
-  const name = [];
-  const abbreviation = [];
+const typeListCache = {
+  city: null,
+  name: null,
+  abbreviation: null,
+};
+
+const cityListCache = new Map();
+
+const buildNameList = () => {
+  const list = [];
+
+  for (const [timezone, tz] of timezoneEntries) {
+    list.push({
+      timezone,
+      ...tz,
+      type: 'name',
+      isCurrent: timezone === guessedZone,
+    });
+  }
+
+  return sortByLabel(list, 'timezone');
+};
+
+const buildAbbreviationList = () => {
+  const list = [];
   const seenAbbreviation = new Set();
 
   for (const [timezone, tz] of timezoneEntries) {
     const { cities = [], ...restTZ } = tz;
     const identifiers = restTZ.identifiers || [];
     const isGuessCurrent = identifiers.includes(guessedZone);
-    const baseObj = { timezone, ...restTZ };
-
-    name.push({ ...baseObj, type: 'name', isCurrent: timezone === guessedZone });
-
     const abbrevKey = getAbbrevKey(tz);
+
     if (!seenAbbreviation.has(abbrevKey) && tz.standardAbbreviation) {
       seenAbbreviation.add(abbrevKey);
-      abbreviation.push({
-        ...baseObj,
+      list.push({
+        timezone,
+        ...restTZ,
         type: 'abbreviation',
         isCurrent: isGuessCurrent,
       });
     }
+  }
 
-    if (cities.length) {
-      for (const c of cities) {
-        const cityData = { province: c.province, city: c.city };
+  return sortByLabel(list, 'standardAbbreviation');
+};
 
-        if (c.iso2 && c.iso2 !== baseObj.countryCode && !Number.isFinite(c.iso2)) {
-          cityData.countryName = c.country;
-          cityData.countryCode = c.iso2;
-        }
+const buildCityList = () => {
+  const list = [];
 
-        city.push({
-          ...baseObj,
-          ...cityData,
-          type: 'city',
-          isCurrent: isGuessCurrent,
-        });
+  for (const [timezone, tz] of timezoneEntries) {
+    const { cities = [], ...restTZ } = tz;
+    const identifiers = restTZ.identifiers || [];
+    const isGuessCurrent = identifiers.includes(guessedZone);
+
+    if (!cities.length) continue;
+
+    for (const c of cities) {
+      const cityData = { province: c.province, city: c.city };
+
+      if (c.iso2 && c.iso2 !== restTZ.countryCode && !Number.isFinite(c.iso2)) {
+        cityData.countryName = c.country;
+        cityData.countryCode = c.iso2;
       }
+
+      list.push({
+        timezone,
+        ...restTZ,
+        ...cityData,
+        type: 'city',
+        isCurrent: isGuessCurrent,
+      });
     }
   }
 
-  return {
-    city: sortByLabel(city, 'city'),
-    name: sortByLabel(name, 'timezone'),
-    abbreviation: sortByLabel(abbreviation, 'standardAbbreviation'),
-  };
-})();
+  return sortByLabel(list, 'city');
+};
 
-const cityListCache = new Map();
+const getBaseList = (type) => {
+  if (!validTypes.has(type)) return [];
+  if (typeListCache[type]) return typeListCache[type];
+
+  if (type === 'city') {
+    typeListCache.city = buildCityList();
+  } else if (type === 'name') {
+    typeListCache.name = buildNameList();
+  } else {
+    typeListCache.abbreviation = buildAbbreviationList();
+  }
+
+  return typeListCache[type];
+};
 
 const getCityListForUser = (userCity) => {
   const cacheKey =
@@ -71,12 +112,14 @@ const getCityListForUser = (userCity) => {
   const cachedList = cityListCache.get(cacheKey);
   if (cachedList) return cachedList;
 
+  const cityBaseList = getBaseList('city');
+
   if (cacheKey === '__guess__') {
-    cityListCache.set(cacheKey, precomputedLists.city);
-    return precomputedLists.city;
+    cityListCache.set(cacheKey, cityBaseList);
+    return cityBaseList;
   }
 
-  const list = precomputedLists.city.map((tz) => ({
+  const list = cityBaseList.map((tz) => ({
     ...tz,
     isCurrent: tz.city === userCity,
   }));
@@ -87,7 +130,7 @@ const getCityListForUser = (userCity) => {
 
 const getCurrentByType = (type, userCity) => {
   const list =
-    type === 'city' ? getCityListForUser(userCity) : (precomputedLists[type] ?? []);
+    type === 'city' ? getCityListForUser(userCity) : getBaseList(type);
   return list.find((item) => item.isCurrent) || null;
 };
 
@@ -141,7 +184,7 @@ const useTimezone = () => {
       if (type === 'city') {
         return getCityListForUser(userCity);
       }
-      return precomputedLists[type];
+      return getBaseList(type);
     },
     [userCity],
   );

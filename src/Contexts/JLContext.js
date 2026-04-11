@@ -10,7 +10,8 @@ import {
 } from 'react';
 import moment from 'moment-timezone';
 import { toast } from 'react-toastify';
-import { useQueryParamsWithHistory, useTimezone } from '@/Hooks';
+import useQueryParamsWithHistory from '@/Hooks/useQueryParamsWithHistory';
+import useTimezone from '@/Hooks/useTimezone';
 import {
   getTZOptionValue,
   getTZSearchKeys,
@@ -91,7 +92,10 @@ const JLProvider = ({ children, defaultValue, initialQueryString }) => {
     return map;
   }, [tzCities]);
 
-  const currentTZData = useMemo(() => getCurrentTZData('city'), [getCurrentTZData]);
+  const currentTZData = useMemo(
+    () => getCurrentTZData('city'),
+    [getCurrentTZData],
+  );
 
   const departureTZ = useMemo(() => {
     return departureTZKey ? tzData.get(departureTZKey) || null : null;

@@ -1,8 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import { CustomSelect } from '@/Components';
-import { useDST } from '@/Contexts';
+import CustomSelect from '@/Components/CustomSelect';
+import { useDST } from '@/Contexts/DSTContext';
 import { placeholders, timezoneFormatOptions } from '@/utils';
 
 const TimezoneFormat = () => {

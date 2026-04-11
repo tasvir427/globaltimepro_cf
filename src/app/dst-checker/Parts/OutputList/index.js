@@ -2,9 +2,11 @@
 
 import { memo } from 'react';
 import classNames from 'classnames';
-import { ClientOnly, DynamicContainer, TimezoneClock } from '@/Components';
+import ClientOnly from '@/Components/ClientOnly';
+import DynamicContainer from '@/Components/DynamicContainer';
+import TimezoneClock from '@/Components/TimezoneClock';
 import { DSTCheckerPlaceholder } from '@/Components/Fallback';
-import { useDST } from '@/Contexts';
+import { useDST } from '@/Contexts/DSTContext';
 import {
   getTZOptionLabel,
   iconFiAlertTriangle,

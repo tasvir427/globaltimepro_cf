@@ -3,7 +3,7 @@
 import { memo } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { iconFaArrowRight } from '@/utils';
-import { ClientOnly } from '@/Components';
+import ClientOnly from '@/Components/ClientOnly';
 
 const MiddleArrow = () => {
   const isSmallScreen = useMediaQuery({ maxWidth: 620 });

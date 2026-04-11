@@ -1,17 +1,15 @@
 import { memo } from 'react';
 import classNames from 'classnames';
-import {
-  CustomHeader,
-  InputLabel,
-  MetaTag,
-  SocialSharing,
-  UndoBtn,
-  RedoBtn,
-  CopyResultBtn,
-  ResetBtn,
-  Instructions,
-} from '@/Components';
-import { DSTProvider } from '@/Contexts';
+import CopyResultBtn from '@/Components/CopyResultBtn';
+import CustomHeader from '@/Components/CustomHeader';
+import InputLabel from '@/Components/InputLabel';
+import Instructions from '@/Components/Instructions';
+import MetaTag from '@/Components/MetaTag';
+import RedoBtn from '@/Components/RedoBtn';
+import ResetBtn from '@/Components/ResetBtn';
+import SocialSharing from '@/Components/SocialSharing';
+import UndoBtn from '@/Components/UndoBtn';
+import DSTProvider from '@/Contexts/DSTContext';
 import { PATHS } from '@/paramsData';
 import {
   buildQueryString,

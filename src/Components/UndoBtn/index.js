@@ -1,8 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import { CustomBtn } from '@/Components';
-import { useQueryParamsWithHistory } from '@/Hooks';
+import CustomBtn from '@/Components/CustomBtn';
+import useQueryParamsWithHistory from '@/Hooks/useQueryParamsWithHistory';
 import { iconIoMdUndo, tooltips } from '@/utils';
 import styles from './styles.module.css';
 

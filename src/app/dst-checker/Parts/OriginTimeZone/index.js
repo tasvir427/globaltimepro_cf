@@ -1,8 +1,9 @@
 'use client';
 
 import { memo } from 'react';
-import { CustomOption, CustomSelect } from '@/Components';
-import { useDST } from '@/Contexts';
+import CustomOption from '@/Components/CustomOption';
+import CustomSelect from '@/Components/CustomSelect';
+import { useDST } from '@/Contexts/DSTContext';
 import { getTZOptionLabel, getTZOptionValue, placeholders } from '@/utils';
 
 const OriginTimeZone = () => {

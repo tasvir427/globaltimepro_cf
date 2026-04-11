@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useDL } from '@/Contexts';
+import { useDL } from '@/Contexts/DLContext';
 import styles from '../../styles.module.css';
 
 const DownloadList = () => {

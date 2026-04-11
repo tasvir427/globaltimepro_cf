@@ -1,8 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import { CustomSelect } from '@/Components';
-import { useTZ } from '@/Contexts';
+import CustomSelect from '@/Components/CustomSelect';
+import { useTZ } from '@/Contexts/TZContext';
 import { placeholders, timeFormatOptions } from '@/utils';
 
 const TimeFormat = () => {

@@ -1,18 +1,16 @@
 import { memo } from 'react';
 import classNames from 'classnames';
-import {
-  CustomHeader,
-  InputLabel,
-  MetaTag,
-  SocialSharing,
-  MiddleArrow,
-  UndoBtn,
-  RedoBtn,
-  CopyResultBtn,
-  ResetBtn,
-  Instructions,
-} from '@/Components';
-import { TZProvider } from '@/Contexts';
+import CopyResultBtn from '@/Components/CopyResultBtn';
+import CustomHeader from '@/Components/CustomHeader';
+import InputLabel from '@/Components/InputLabel';
+import Instructions from '@/Components/Instructions';
+import MetaTag from '@/Components/MetaTag';
+import MiddleArrow from '@/Components/MiddleArrow';
+import RedoBtn from '@/Components/RedoBtn';
+import ResetBtn from '@/Components/ResetBtn';
+import SocialSharing from '@/Components/SocialSharing';
+import UndoBtn from '@/Components/UndoBtn';
+import TZProvider from '@/Contexts/TZContext';
 import { PATHS } from '@/paramsData';
 import {
   buildQueryString,

@@ -1,8 +1,9 @@
 'use client';
 
 import { memo } from 'react';
-import { CustomOption, CustomSelect } from '@/Components';
-import { useTZ } from '@/Contexts';
+import CustomOption from '@/Components/CustomOption';
+import CustomSelect from '@/Components/CustomSelect';
+import { useTZ } from '@/Contexts/TZContext';
 import {
   getTZOptionLabel,
   getTZOptionValue,

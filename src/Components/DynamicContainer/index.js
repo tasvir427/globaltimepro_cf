@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useRef } from 'react';
-import { useResizeObserver } from '@/Hooks';
+import useResizeObserver from '@/Hooks/useResizeObserver';
 
 const DynamicContainer = ({ children, style, ...rest }) => {
   const content = useRef(null);

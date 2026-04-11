@@ -2,8 +2,9 @@
 
 import React, { memo } from 'react';
 import classNames from 'classnames';
-import { useJL } from '@/Contexts';
-import { DynamicContainer, ExportToPdf } from '@/Components';
+import { useJL } from '@/Contexts/JLContext';
+import DynamicContainer from '@/Components/DynamicContainer';
+import ExportToPdf from '@/Components/ExportToPdf';
 import {
   icon2FaFlask,
   iconBiSolidPlaneAlt,

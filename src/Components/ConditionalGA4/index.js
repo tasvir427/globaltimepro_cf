@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import Script from 'next/script';
-import { useTurnstile } from '@/Contexts';
+import { useTurnstile } from '@/Contexts/TurnstileContext';
 
 const ConditionalGA4 = () => {
   const { isHuman } = useTurnstile();

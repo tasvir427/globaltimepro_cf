@@ -1,8 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import { CustomSwitch } from '@/Components';
-import { useDST } from '@/Contexts';
+import CustomSwitch from '@/Components/CustomSwitch';
+import { useDST } from '@/Contexts/DSTContext';
 import { inputLabels } from '@/utils';
 
 const CurrentOrigin = () => {

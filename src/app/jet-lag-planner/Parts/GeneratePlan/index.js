@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { useJL } from '@/Contexts';
+import { useJL } from '@/Contexts/JLContext';
 import styles from '../../styles.module.css';
 
 const GeneratePlan = () => {

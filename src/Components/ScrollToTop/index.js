@@ -1,7 +1,6 @@
 'use client';
 
 import { memo, useCallback, useEffect, useState } from 'react';
-import { iconFiArrowUp } from '@/utils';
 import styles from './styles.module.css';
 
 const ScrollToTop = () => {
@@ -33,7 +32,8 @@ const ScrollToTop = () => {
 
   return (
     <button className={styles.scrollToTopButton} onClick={scrollToTop}>
-      {iconFiArrowUp}
+      <span aria-hidden>↑</span>
+      <span className={styles.srOnly}>Back to top</span>
     </button>
   );
 };

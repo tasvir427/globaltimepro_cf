@@ -1,9 +1,9 @@
 'use client';
 
 import { memo } from 'react';
-import { CustomBtn } from '@/Components';
+import CustomBtn from '@/Components/CustomBtn';
 import { iconRiResetLeftLine, tooltips } from '@/utils';
-import { useQueryParamsWithHistory } from '@/Hooks';
+import useQueryParamsWithHistory from '@/Hooks/useQueryParamsWithHistory';
 
 const ResetBtn = () => {
   const { reset } = useQueryParamsWithHistory('', { listenToLocation: false });

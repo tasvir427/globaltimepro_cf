@@ -1,18 +1,16 @@
 import { memo } from 'react';
 import classNames from 'classnames';
-import {
-  CustomHeader,
-  InputLabel,
-  MetaTag,
-  MiddleArrow,
-  SocialSharing,
-  UndoBtn,
-  RedoBtn,
-  CopyResultBtn,
-  ResetBtn,
-  Instructions,
-} from '@/Components';
-import { JLProvider } from '@/Contexts';
+import CopyResultBtn from '@/Components/CopyResultBtn';
+import CustomHeader from '@/Components/CustomHeader';
+import InputLabel from '@/Components/InputLabel';
+import Instructions from '@/Components/Instructions';
+import MetaTag from '@/Components/MetaTag';
+import MiddleArrow from '@/Components/MiddleArrow';
+import RedoBtn from '@/Components/RedoBtn';
+import ResetBtn from '@/Components/ResetBtn';
+import SocialSharing from '@/Components/SocialSharing';
+import UndoBtn from '@/Components/UndoBtn';
+import JLProvider from '@/Contexts/JLContext';
 import { PATHS } from '@/paramsData';
 import {
   buildQueryString,

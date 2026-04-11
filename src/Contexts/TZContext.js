@@ -11,7 +11,8 @@ import {
 } from 'react';
 import { toast } from 'react-toastify';
 import moment from 'moment-timezone';
-import { useQueryParamsWithHistory, useTimezone } from '@/Hooks';
+import useQueryParamsWithHistory from '@/Hooks/useQueryParamsWithHistory';
+import useTimezone from '@/Hooks/useTimezone';
 import {
   dayFormatOptions,
   timeFormatOptions,

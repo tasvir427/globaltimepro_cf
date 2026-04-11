@@ -1,8 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import { CustomSelect } from '@/Components';
-import { useJL } from '@/Contexts';
+import CustomSelect from '@/Components/CustomSelect';
+import { useJL } from '@/Contexts/JLContext';
 import { placeholders, timeLineOptions } from '@/utils';
 
 const TimeLine = () => {

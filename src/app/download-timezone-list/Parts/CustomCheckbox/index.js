@@ -2,7 +2,7 @@
 
 import React, { memo } from 'react';
 import { inputLabels, tooltips } from '@/utils';
-import { useDL } from '@/Contexts';
+import { useDL } from '@/Contexts/DLContext';
 import styles from '../../styles.module.css';
 
 const CustomCheckbox = ({ name }) => {

@@ -1,8 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import { CustomSelect } from '@/Components';
-import { useDL } from '@/Contexts';
+import CustomSelect from '@/Components/CustomSelect';
+import { useDL } from '@/Contexts/DLContext';
 import { fileTypeOptions, placeholders } from '@/utils';
 
 const FileType = () => {

@@ -1,8 +1,9 @@
 'use client';
 
 import { memo } from 'react';
-import { useTZ } from '@/Contexts';
-import { ClientOnly, CustomCollapse } from '@/Components';
+import { useTZ } from '@/Contexts/TZContext';
+import ClientOnly from '@/Components/ClientOnly';
+import CustomCollapse from '@/Components/CustomCollapse';
 import { TimeInputFormatContent } from '../index';
 
 const CustomTimeFormat = () => {

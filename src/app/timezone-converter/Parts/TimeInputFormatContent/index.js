@@ -1,9 +1,9 @@
 'use client';
 
 import { memo } from 'react';
-import { useTZ } from '@/Contexts';
+import { useTZ } from '@/Contexts/TZContext';
 import { dayFormatOptions, tooltips } from '@/utils';
-import { CustomChoice } from '@/Components';
+import CustomChoice from '@/Components/CustomChoice';
 import styles from '../../styles.module.css';
 
 const TimeInputFormatContent = ({ isLoading }) => {

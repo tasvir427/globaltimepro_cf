@@ -1,8 +1,8 @@
 'use client';
 
 import { memo, useCallback, useRef, useLayoutEffect } from 'react';
-import { CustomInput } from '@/Components';
-import { useJL } from '@/Contexts';
+import CustomInput from '@/Components/CustomInput';
+import { useJL } from '@/Contexts/JLContext';
 import { placeholders, tooltips } from '@/utils';
 import styles from '../../styles.module.css';
 

@@ -1,8 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import { CustomSwitch } from '@/Components';
-import { useJL } from '@/Contexts';
+import CustomSwitch from '@/Components/CustomSwitch';
+import { useJL } from '@/Contexts/JLContext';
 import { inputLabels } from '@/utils';
 
 const CurrentDestination = () => {
